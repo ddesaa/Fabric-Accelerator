@@ -1,0 +1,165 @@
+{
+  "properties": {
+    "activities": [
+      {
+        "type": "Filter",
+        "typeProperties": {
+          "items": {
+            "value": "@pipeline().parameters.par_entities",
+            "type": "Expression"
+          },
+          "condition": {
+            "value": "@contains(item().trigger_name,pipeline().parameters.par_trigger_name)",
+            "type": "Expression"
+          }
+        },
+        "name": "Filter Trigger Name",
+        "dependsOn": []
+      },
+      {
+        "type": "ForEach",
+        "typeProperties": {
+          "items": {
+            "value": "@activity('Filter Trigger Name').output.value",
+            "type": "Expression"
+          },
+          "activities": [
+            {
+              "type": "ExecutePipeline",
+              "typeProperties": {
+                "pipeline": {
+                  "referenceName": "9905ef74-5a61-93de-40a5-598ae9675cf2",
+                  "type": "PipelineReference"
+                },
+                "parameters": {
+                  "par_entity": {
+                    "value": "@json(string(item())).entity",
+                    "type": "Expression"
+                  },
+                  "par_global_run_id": {
+                    "value": "@pipeline().parameters.par_global_run_id",
+                    "type": "Expression"
+                  },
+                  "par_full_process": {
+                    "value": "@pipeline().parameters.par_full_process",
+                    "type": "Expression"
+                  },
+                  "par_source_folder": {
+                    "value": "@json(string(item())).source_folder",
+                    "type": "Expression"
+                  },
+                  "par_source": {
+                    "value": "@json(string(item())).source",
+                    "type": "Expression"
+                  },
+                  "par_target_folder": {
+                    "value": "@json(string(item())).target_folder",
+                    "type": "Expression"
+                  },
+                  "par_file_type": {
+                    "value": "@json(string(item())).file_type",
+                    "type": "Expression"
+                  },
+                  "par_lastdate_process": {
+                    "value": "@pipeline().parameters.par_lastdate_process",
+                    "type": "Expression"
+                  }
+                },
+                "waitOnCompletion": true
+              },
+              "policy": {
+                "secureInput": false
+              },
+              "name": "Run PL701",
+              "dependsOn": []
+            }
+          ]
+        },
+        "name": "Foreach Entity",
+        "dependsOn": [
+          {
+            "activity": "Filter Trigger Name",
+            "dependencyConditions": [
+              "Succeeded"
+            ]
+          }
+        ]
+      }
+    ],
+    "parameters": {
+      "par_global_run_id": {
+        "type": "string"
+      },
+      "par_entities": {
+        "type": "array",
+        "defaultValue": [
+          {
+            "source_folder": "Sources/ADW2022/Employee",
+            "target_folder": "landing/ADW2022/Employee",
+            "trigger_name": "Main|RRHH|Employee",
+            "entity": "Employee",
+            "file_type": "csv",
+            "source": "fileserver"
+          },
+          {
+            "source_folder": "Sources/ADW2022/BusinessEntity",
+            "target_folder": "landing/ADW2022/BusinessEntity",
+            "trigger_name": "Main|RRHH",
+            "entity": "BusinessEntity",
+            "file_type": "csv",
+            "source": "fileserver"
+          },
+          {
+            "source_folder": "Sources/ADW2022/BusinessEntityAddress",
+            "target_folder": "landing/ADW2022/BusinessEntityAddress",
+            "trigger_name": "Main|RRHH",
+            "entity": "BusinessEntityAddress",
+            "file_type": "csv",
+            "source": "fileserver"
+          },
+          {
+            "source_folder": "Sources/ADW2022/BusinessEntityContact",
+            "target_folder": "landing/ADW2022/BusinessEntityContact",
+            "trigger_name": "Main|RRHH",
+            "entity": "BusinessEntityContact",
+            "file_type": "csv",
+            "source": "fileserver"
+          },
+          {
+            "source_folder": "Sources/ADW2022/Department",
+            "target_folder": "landing/ADW2022/Department",
+            "trigger_name": "Main|RRHH",
+            "entity": "Department",
+            "file_type": "csv",
+            "source": "fileserver"
+          },
+          {
+            "source_folder": "Sources/ADW2022/EmployeeDepartment",
+            "target_folder": "landing/ADW2022/EmployeeDepartment",
+            "trigger_name": "Main|RRHH",
+            "entity": "EmployeeDepartment",
+            "file_type": "csv",
+            "source": "fileserver"
+          },
+          {
+            "source_folder": "Sources/ADW2022/Shift",
+            "target_folder": "landing/ADW2022/Shift",
+            "trigger_name": "Main|RRHH",
+            "entity": "Shift",
+            "file_type": "csv",
+            "source": "fileserver"
+          }
+        ]
+      },
+      "par_trigger_name": {
+        "type": "string"
+      },
+      "par_full_process": {
+        "type": "string"
+      },
+      "par_lastdate_process": {
+        "type": "string"
+      }
+    }
+  }
+}

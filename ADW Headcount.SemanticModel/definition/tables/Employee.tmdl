@@ -1,0 +1,155 @@
+table Employee
+	lineageTag: f4f37e02-54c8-4c18-a196-4bdf90c2c9cb
+
+	column EmployeeID
+		dataType: int64
+		formatString: 0
+		sourceProviderType: int
+		lineageTag: 022ea7f0-96d9-49c7-ae1c-a8ff2b48553b
+		summarizeBy: none
+		sourceColumn: EmployeeID
+
+		annotation SummarizationSetBy = Automatic
+
+	column NationalIDNumber
+		dataType: string
+		sourceProviderType: varchar(8000)
+		lineageTag: afac4385-9add-4731-b8c2-1c10a5c89d98
+		summarizeBy: none
+		sourceColumn: NationalIDNumber
+
+		annotation SummarizationSetBy = Automatic
+
+	column LoginID
+		dataType: string
+		sourceProviderType: varchar(8000)
+		lineageTag: 12a31ddc-ab80-4733-824d-707d74ff3108
+		summarizeBy: none
+		sourceColumn: LoginID
+
+		annotation SummarizationSetBy = Automatic
+
+	column JobTitle
+		dataType: string
+		sourceProviderType: varchar(8000)
+		lineageTag: aba8ec39-c049-4b63-8f2e-54b3d182f6cf
+		summarizeBy: none
+		sourceColumn: JobTitle
+
+		annotation SummarizationSetBy = Automatic
+
+	column MaritalStatus
+		dataType: string
+		sourceProviderType: varchar(8000)
+		lineageTag: 7b8f66fa-af21-4998-97ef-04c539ce6ef2
+		summarizeBy: none
+		sourceColumn: MaritalStatus
+
+		annotation SummarizationSetBy = Automatic
+
+	column BirthDate
+		dataType: dateTime
+		formatString: Long Date
+		sourceProviderType: date
+		lineageTag: f26b80d3-2d6d-43b5-8fc4-0bb192425432
+		summarizeBy: none
+		sourceColumn: BirthDate
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column Gender
+		dataType: int64
+		formatString: 0
+		sourceProviderType: int
+		lineageTag: accbced1-15ac-4c02-b0a2-09988a9dd3f7
+		summarizeBy: none
+		sourceColumn: Gender
+
+		annotation SummarizationSetBy = Automatic
+
+	column HireDate
+		dataType: dateTime
+		formatString: Long Date
+		sourceProviderType: date
+		lineageTag: 6123ae05-5fc0-4dd8-95f1-7207cd5562db
+		summarizeBy: none
+		sourceColumn: HireDate
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column SalariedFlag
+		dataType: int64
+		formatString: 0
+		sourceProviderType: int
+		lineageTag: 8456235b-c292-43ae-84ee-c2a43a7506d1
+		summarizeBy: none
+		sourceColumn: SalariedFlag
+
+		annotation SummarizationSetBy = Automatic
+
+	column FirstName
+		dataType: string
+		isNullable: false
+		sourceProviderType: varchar(8000)
+		lineageTag: 3e88dfd3-f820-4dc9-8eec-2b4003f2f761
+		summarizeBy: none
+		sourceColumn: FirstName
+
+		annotation SummarizationSetBy = Automatic
+
+	column MiddleName
+		dataType: string
+		isNullable: false
+		sourceProviderType: varchar(8000)
+		lineageTag: 47b6aa02-f1d2-4509-b3f8-545b41b5d398
+		summarizeBy: none
+		sourceColumn: MiddleName
+
+		annotation SummarizationSetBy = Automatic
+
+	column LastName
+		dataType: string
+		isNullable: false
+		sourceProviderType: varchar(8000)
+		lineageTag: 9fcbf6ac-a001-4b05-9c3e-7cbc678d10cc
+		summarizeBy: none
+		sourceColumn: LastName
+
+		annotation SummarizationSetBy = Automatic
+
+	column FullName
+		dataType: string
+		sourceProviderType: varchar(8000)
+		lineageTag: 8c6ca4cb-2feb-48de-a785-4a9f44c441a8
+		summarizeBy: none
+		sourceColumn: FullName
+
+		annotation SummarizationSetBy = Automatic
+
+	column SYS_Run_ID
+		dataType: string
+		isNullable: false
+		sourceProviderType: varchar(8000)
+		lineageTag: a1df8906-4fca-43ec-ad6b-3acca993763f
+		summarizeBy: none
+		sourceColumn: SYS_Run_ID
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Employee = m
+		mode: dual
+		source =
+				let
+				    Source = Sql.Database("pzo62lnr7m2ura6lib4hcu6cua-geundog74veuvk5fqtrsrqaoya.datawarehouse.fabric.microsoft.com", "LH_Gold"),
+				    Silver_employee = Source{[Schema="Silver",Item="employee"]}[Data]
+				in
+				    Silver_employee
+
+	changedProperty = Name
+
+	annotation PBI_ResultType = Table
+

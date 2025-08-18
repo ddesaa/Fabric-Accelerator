@@ -1,0 +1,232 @@
+{
+  "properties": {
+    "activities": [
+      {
+        "type": "Switch",
+        "typeProperties": {
+          "on": {
+            "value": "@pipeline().parameters.process_step",
+            "type": "Expression"
+          },
+          "cases": [
+            {
+              "value": "landing",
+              "activities": [
+                {
+                  "type": "ExecutePipeline",
+                  "typeProperties": {
+                    "pipeline": {
+                      "referenceName": "bc81065d-26df-b1fb-4729-8d2079dc42f0",
+                      "type": "PipelineReference"
+                    },
+                    "parameters": {
+                      "Integration_setting": {
+                        "value": "@pipeline().parameters.integration_setting",
+                        "type": "Expression"
+                      },
+                      "par_global_run_id": {
+                        "value": "@pipeline().parameters.global_run_id",
+                        "type": "Expression"
+                      },
+                      "par_lastdate_process": {
+                        "value": "@pipeline().parameters.last_process",
+                        "type": "Expression"
+                      },
+                      "par_source": {
+                        "value": "@json(pipeline().parameters.Integration_setting).source",
+                        "type": "Expression"
+                      },
+                      "par_datetime_region": {
+                        "value": "@pipeline().parameters.datetime_region",
+                        "type": "Expression"
+                      },
+                      "par_process_step": {
+                        "value": "@pipeline().parameters.process_step",
+                        "type": "Expression"
+                      }
+                    },
+                    "waitOnCompletion": true
+                  },
+                  "policy": {
+                    "secureInput": false
+                  },
+                  "name": "DP 300",
+                  "dependsOn": []
+                }
+              ]
+            },
+            {
+              "value": "bronze",
+              "activities": [
+                {
+                  "type": "ExecutePipeline",
+                  "typeProperties": {
+                    "pipeline": {
+                      "referenceName": "637c818e-08c3-930e-4836-21ff1920433f",
+                      "type": "PipelineReference"
+                    },
+                    "parameters": {
+                      "par_global_run_id": {
+                        "value": "@pipeline().parameters.global_run_id",
+                        "type": "Expression"
+                      },
+                      "par_entity": {
+                        "value": "@json(pipeline().parameters.integration_setting).entity",
+                        "type": "Expression"
+                      },
+                      "par_datetime_region": {
+                        "value": "@pipeline().parameters.datetime_region",
+                        "type": "Expression"
+                      }
+                    },
+                    "waitOnCompletion": true
+                  },
+                  "policy": {
+                    "secureInput": false
+                  },
+                  "name": "DP 020",
+                  "dependsOn": []
+                }
+              ]
+            },
+            {
+              "value": "silver",
+              "activities": [
+                {
+                  "type": "ExecutePipeline",
+                  "typeProperties": {
+                    "pipeline": {
+                      "referenceName": "1d2b57d1-8b7a-9043-4146-1006dcc923f1",
+                      "type": "PipelineReference"
+                    },
+                    "parameters": {
+                      "par_global_run_id": {
+                        "value": "@pipeline().parameters.global_run_id",
+                        "type": "Expression"
+                      },
+                      "par_entity": {
+                        "value": "@json(pipeline().parameters.integration_setting).entity",
+                        "type": "Expression"
+                      },
+                      "par_notebook": {
+                        "value": "@json(pipeline().parameters.integration_setting).silver_notebook",
+                        "type": "Expression"
+                      },
+                      "par_workspace_id": {
+                        "value": "@json(pipeline().parameters.integration_setting).silver_workspace_ID",
+                        "type": "Expression"
+                      },
+                      "par_full_process": {
+                        "value": "@pipeline().parameters.is_process_full",
+                        "type": "Expression"
+                      },
+                      "par_datetime_region": {
+                        "value": "@pipeline().parameters.datetime_region",
+                        "type": "Expression"
+                      },
+                      "par_step_process": {
+                        "value": "@pipeline().parameters.process_step",
+                        "type": "Expression"
+                      }
+                    },
+                    "waitOnCompletion": true
+                  },
+                  "policy": {
+                    "secureInput": false
+                  },
+                  "name": "exec DP030 silver",
+                  "dependsOn": []
+                }
+              ]
+            },
+            {
+              "value": "gold",
+              "activities": [
+                {
+                  "type": "ExecutePipeline",
+                  "typeProperties": {
+                    "pipeline": {
+                      "referenceName": "1d2b57d1-8b7a-9043-4146-1006dcc923f1",
+                      "type": "PipelineReference"
+                    },
+                    "parameters": {
+                      "par_global_run_id": {
+                        "value": "@pipeline().parameters.global_run_id",
+                        "type": "Expression"
+                      },
+                      "par_entity": {
+                        "value": "@json(pipeline().parameters.integration_setting).entity",
+                        "type": "Expression"
+                      },
+                      "par_notebook": {
+                        "value": "@json(pipeline().parameters.integration_setting).gold_notebook",
+                        "type": "Expression"
+                      },
+                      "par_workspace_id": {
+                        "value": "@json(pipeline().parameters.integration_setting).gold_workspace_ID",
+                        "type": "Expression"
+                      },
+                      "par_full_process": {
+                        "value": "@pipeline().parameters.is_process_full",
+                        "type": "Expression"
+                      },
+                      "par_datetime_region": {
+                        "value": "@pipeline().parameters.datetime_region",
+                        "type": "Expression"
+                      },
+                      "par_step_process": {
+                        "value": "@pipeline().parameters.process_step",
+                        "type": "Expression"
+                      }
+                    },
+                    "waitOnCompletion": true
+                  },
+                  "policy": {
+                    "secureInput": false
+                  },
+                  "name": "exec DP030 gold",
+                  "dependsOn": []
+                }
+              ]
+            }
+          ],
+          "defaultActivities": [
+            {
+              "type": "Wait",
+              "typeProperties": {
+                "waitTimeInSeconds": 1
+              },
+              "name": "Wait2",
+              "dependsOn": []
+            }
+          ]
+        },
+        "name": "Switch1",
+        "dependsOn": []
+      }
+    ],
+    "parameters": {
+      "global_run_id": {
+        "type": "string"
+      },
+      "is_process_full": {
+        "type": "string"
+      },
+      "integration_process_key": {
+        "type": "string"
+      },
+      "process_step": {
+        "type": "string"
+      },
+      "last_process": {
+        "type": "string"
+      },
+      "integration_setting": {
+        "type": "string"
+      },
+      "datetime_region": {
+        "type": "string"
+      }
+    }
+  }
+}

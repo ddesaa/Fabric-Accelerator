@@ -1,0 +1,140 @@
+table Integration_lineage
+	lineageTag: 14dfb919-8cbf-4f9a-baf0-eaa961788589
+	sourceLineageTag: [cfg].[Integration_lineage]
+
+	measure '_Start Time' = min(Integration_lineage[sys_start_time])
+		formatString: General Date
+		isHidden
+		lineageTag: 9e2234b3-d839-436d-8c03-f5d6056c9285
+
+		changedProperty = Name
+
+		changedProperty = IsHidden
+
+	measure '_End Time' = max(Integration_lineage[sys_end_time])
+		formatString: General Date
+		isHidden
+		lineageTag: 40c8c3cb-39e5-460e-a977-1295ae17870f
+
+		changedProperty = Name
+
+		changedProperty = IsHidden
+
+	measure Seconds = DATEDIFF([Start Time],[End Time],SECOND)
+		formatString: #,0
+		lineageTag: a2ecb051-3a9c-4384-9043-13107c6fdcb8
+
+		changedProperty = Name
+
+		changedProperty = FormatString
+
+	measure 'Start Time' = ```
+			CALCULATE([_Start Time],FILTER(VALUES(Integration_lineage[global_run_id]),Integration_lineage[global_run_id]=[Global Run ID Selected])) 
+			```
+		formatString: dd-mmm-yy hh:nn:ss
+		lineageTag: 9cfe734f-3c81-438e-81b0-18989a3503c2
+
+		changedProperty = Name
+
+		changedProperty = FormatString
+
+		annotation PBI_FormatHint = {"isDateTimeCustom":true}
+
+	measure 'End Time' = ```
+			CALCULATE([_End Time],FILTER(VALUES(Integration_lineage[global_run_id]),Integration_lineage[global_run_id]=[Global Run ID Selected])) 
+			```
+		formatString: General Date
+		lineageTag: d24c4e6a-cd6a-4e93-a131-7035812b2939
+
+		changedProperty = Name
+
+		changedProperty = FormatString
+
+	column global_run_id
+		dataType: string
+		isHidden
+		lineageTag: 64553bc1-15cd-4224-9f28-e602e454a9b9
+		sourceLineageTag: global_run_id
+		summarizeBy: none
+		sourceColumn: global_run_id
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column run_id
+		dataType: string
+		lineageTag: f5ae7b5b-b206-4152-be7d-9c7be27b6e46
+		sourceLineageTag: run_id
+		summarizeBy: none
+		sourceColumn: run_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column sys_start_time
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: 59b30934-aec0-40d6-a823-b72d2eb70005
+		sourceLineageTag: sys_start_time
+		summarizeBy: none
+		sourceColumn: sys_start_time
+
+		annotation SummarizationSetBy = Automatic
+
+	column sys_end_time
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: 14950f81-f4d4-47bd-9b75-e777885f2623
+		sourceLineageTag: sys_end_time
+		summarizeBy: none
+		sourceColumn: sys_end_time
+
+		annotation SummarizationSetBy = Automatic
+
+	column log
+		dataType: string
+		lineageTag: ccd405f0-b386-444f-8863-785d599fcf7d
+		sourceLineageTag: log
+		summarizeBy: none
+		sourceColumn: log
+
+		annotation SummarizationSetBy = Automatic
+
+	column process_step
+		dataType: string
+		lineageTag: 0d80e192-46fd-4360-9d80-ef9c064d61ae
+		sourceLineageTag: process_step
+		summarizeBy: none
+		sourceColumn: process_step
+
+		annotation SummarizationSetBy = Automatic
+
+	column entity
+		dataType: string
+		lineageTag: 5d89b50a-994e-4a48-823b-83124a3e1e9d
+		sourceLineageTag: entity
+		summarizeBy: none
+		sourceColumn: entity
+
+		annotation SummarizationSetBy = Automatic
+
+	column integration_lineage_key
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: 56f676bc-15bf-4f42-827e-fb5f58675601
+		sourceLineageTag: integration_lineage_key
+		summarizeBy: sum
+		sourceColumn: integration_lineage_key
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Integration_lineage = entity
+		mode: directLake
+		source
+			entityName: Integration_lineage
+			schemaName: cfg
+			expressionSource: 'DirectLake - dbControl'
+

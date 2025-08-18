@@ -1,0 +1,105 @@
+{
+  "properties": {
+    "activities": [
+      {
+        "type": "Switch",
+        "typeProperties": {
+          "on": {
+            "value": "@pipeline().parameters.par_source",
+            "type": "Expression"
+          },
+          "cases": [
+            {
+              "value": "fileserver",
+              "activities": [
+                {
+                  "type": "ExecutePipeline",
+                  "typeProperties": {
+                    "pipeline": {
+                      "referenceName": "f08f22a8-dfa3-9e21-4166-e98e1035e856",
+                      "type": "PipelineReference"
+                    },
+                    "parameters": {
+                      "par_entity": {
+                        "value": "@pipeline().parameters.par_entity",
+                        "type": "Expression"
+                      },
+                      "par_global_run_id": {
+                        "value": "@pipeline().parameters.par_global_run_id",
+                        "type": "Expression"
+                      },
+                      "par_full_process": {
+                        "value": "@pipeline().parameters.par_full_process",
+                        "type": "Expression"
+                      },
+                      "par_source_folder": {
+                        "value": "@pipeline().parameters.par_source_folder",
+                        "type": "Expression"
+                      },
+                      "par_target_folder": {
+                        "value": "@pipeline().parameters.par_target_folder",
+                        "type": "Expression"
+                      },
+                      "par_file_type": {
+                        "value": "@pipeline().parameters.par_file_type",
+                        "type": "Expression"
+                      },
+                      "par_lastdate_process": {
+                        "value": "@pipeline().parameters.par_lastdate_process",
+                        "type": "Expression"
+                      }
+                    },
+                    "waitOnCompletion": true
+                  },
+                  "policy": {
+                    "secureInput": false
+                  },
+                  "name": "Run PL100",
+                  "dependsOn": []
+                }
+              ]
+            }
+          ],
+          "defaultActivities": [
+            {
+              "type": "Wait",
+              "typeProperties": {
+                "waitTimeInSeconds": 1
+              },
+              "name": "Wait1",
+              "dependsOn": []
+            }
+          ]
+        },
+        "name": "Switch source",
+        "dependsOn": []
+      }
+    ],
+    "parameters": {
+      "par_entity": {
+        "type": "string"
+      },
+      "par_global_run_id": {
+        "type": "string"
+      },
+      "par_full_process": {
+        "type": "string"
+      },
+      "par_source_folder": {
+        "type": "string"
+      },
+      "par_source": {
+        "type": "string"
+      },
+      "par_target_folder": {
+        "type": "string"
+      },
+      "par_file_type": {
+        "type": "string"
+      },
+      "par_lastdate_process": {
+        "type": "string"
+      }
+    }
+  }
+}

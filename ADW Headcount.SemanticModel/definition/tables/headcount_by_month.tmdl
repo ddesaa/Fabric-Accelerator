@@ -1,0 +1,111 @@
+table headcount_by_month
+	isHidden
+	lineageTag: 03afdbfa-b0d1-4eef-b2bc-d3097ecf36f5
+
+	column DateID
+		dataType: int64
+		isHidden
+		isNullable: false
+		formatString: 0
+		sourceProviderType: int
+		lineageTag: db972256-277a-444f-9cfc-ac258672d6ef
+		summarizeBy: none
+		sourceColumn: DateID
+
+		alternateOf
+			baseColumn: headcount.DateID
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column DepartmentID
+		dataType: int64
+		isHidden
+		formatString: 0
+		sourceProviderType: int
+		lineageTag: 86716174-345c-474b-920d-7867d1d81361
+		summarizeBy: none
+		sourceColumn: DepartmentID
+
+		alternateOf
+			baseColumn: headcount.DepartmentID
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column ShiftID
+		dataType: int64
+		isHidden
+		formatString: 0
+		sourceProviderType: int
+		lineageTag: e8de7d56-e0b9-42f0-bc0e-5febcaa6899d
+		summarizeBy: none
+		sourceColumn: ShiftID
+
+		alternateOf
+			baseColumn: headcount.ShiftID
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column Employee
+		dataType: int64
+		isHidden
+		isNullable: false
+		formatString: 0
+		sourceProviderType: bigint
+		lineageTag: 3455ada3-bb12-49c9-80f1-7671dfd09167
+		summarizeBy: sum
+		sourceColumn: Employee
+
+		alternateOf
+			summarization: count
+			baseTable: headcount
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column SalesPerson
+		dataType: int64
+		isHidden
+		isNullable: false
+		formatString: 0
+		sourceProviderType: bigint
+		lineageTag: 546eb557-b01b-4b30-8c8e-1cf90ef3492f
+		summarizeBy: sum
+		sourceColumn: SalesPerson
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column SYS_Run_ID
+		dataType: string
+		isHidden
+		isNullable: false
+		sourceProviderType: varchar(8000)
+		lineageTag: 5c5cad72-8c15-4043-a9ef-fd55306b9577
+		summarizeBy: none
+		sourceColumn: SYS_Run_ID
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	partition headcount_by_month = m
+		mode: import
+		source =
+				let
+				    Source = Sql.Database("pzo62lnr7m2ura6lib4hcu6cua-geundog74veuvk5fqtrsrqaoya.datawarehouse.fabric.microsoft.com", "LH_Gold"),
+				    dbo_headcount_by_month = Source{[Schema="dbo",Item="headcount_by_month"]}[Data]
+				in
+				    dbo_headcount_by_month
+
+	changedProperty = IsHidden
+
+	annotation PBI_ResultType = Table
+

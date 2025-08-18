@@ -1,0 +1,11 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/gitIntegration/platformProperties/2.0.0/schema.json",
+  "metadata": {
+    "type": "DataPipeline",
+    "displayName": "DP101 fileserver folder"
+  },
+  "config": {
+    "version": "2.0",
+    "logicalId": "1feefcd0-3dee-99bf-42e1-19b09171b830"
+  }
+}

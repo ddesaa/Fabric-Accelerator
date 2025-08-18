@@ -1,0 +1,63 @@
+{
+  "properties": {
+    "activities": [
+      {
+        "type": "TridentNotebook",
+        "typeProperties": {
+          "notebookId": "48647b13-a400-a3c7-4252-3f02276eb395",
+          "workspaceId": "00000000-0000-0000-0000-000000000000",
+          "parameters": {
+            "is_full_load": {
+              "value": {
+                "value": "@pipeline().parameters.par_process_full",
+                "type": "Expression"
+              },
+              "type": "string"
+            },
+            "run_ID": {
+              "value": {
+                "value": "@pipeline().parameters.par_global_run_id",
+                "type": "Expression"
+              },
+              "type": "string"
+            },
+            "notebook_name": {
+              "value": {
+                "value": "@pipeline().parameters.par_notebook_name",
+                "type": "Expression"
+              },
+              "type": "string"
+            }
+          }
+        },
+        "policy": {
+          "timeout": "0.12:00:00",
+          "retry": 3,
+          "retryIntervalInSeconds": 30,
+          "secureInput": false,
+          "secureOutput": false
+        },
+        "name": "nb_exec",
+        "dependsOn": []
+      }
+    ],
+    "parameters": {
+      "par_notebook_name": {
+        "type": "String",
+        "defaultValue": "Employee_get_landing"
+      },
+      "par_global_run_id": {
+        "type": "string",
+        "defaultValue": "0"
+      },
+      "par_entity": {
+        "type": "string",
+        "defaultValue": "Employee"
+      },
+      "par_process_full": {
+        "type": "string",
+        "defaultValue": "True"
+      }
+    }
+  }
+}

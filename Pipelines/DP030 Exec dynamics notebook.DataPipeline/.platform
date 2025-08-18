@@ -1,0 +1,11 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/gitIntegration/platformProperties/2.0.0/schema.json",
+  "metadata": {
+    "type": "DataPipeline",
+    "displayName": "DP030 Exec dynamics notebook"
+  },
+  "config": {
+    "version": "2.0",
+    "logicalId": "1d2b57d1-8b7a-9043-4146-1006dcc923f1"
+  }
+}

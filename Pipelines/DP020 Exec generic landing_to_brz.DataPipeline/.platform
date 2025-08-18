@@ -1,0 +1,11 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/gitIntegration/platformProperties/2.0.0/schema.json",
+  "metadata": {
+    "type": "DataPipeline",
+    "displayName": "DP020 Exec generic landing_to_brz"
+  },
+  "config": {
+    "version": "2.0",
+    "logicalId": "637c818e-08c3-930e-4836-21ff1920433f"
+  }
+}

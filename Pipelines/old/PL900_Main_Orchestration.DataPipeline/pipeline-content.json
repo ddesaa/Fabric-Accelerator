@@ -1,0 +1,514 @@
+{
+  "properties": {
+    "activities": [
+      {
+        "type": "ExecutePipeline",
+        "typeProperties": {
+          "pipeline": {
+            "referenceName": "6ab2a3a6-1627-ba4c-4ea9-8b3aa9bbe6d7",
+            "type": "PipelineReference"
+          },
+          "parameters": {
+            "par_global_run_id": {
+              "value": "@pipeline().RunId",
+              "type": "Expression"
+            },
+            "par_entities": {
+              "value": "@activity('IngestJSON').output.value",
+              "type": "Expression"
+            },
+            "par_trigger_name": {
+              "value": "@pipeline().parameters.par_trigger_name",
+              "type": "Expression"
+            },
+            "par_full_process": {
+              "value": "@pipeline().parameters.par_full_process",
+              "type": "Expression"
+            },
+            "par_lastdate_process": {
+              "value": "@variables('var_lastprocess')",
+              "type": "Expression"
+            }
+          },
+          "waitOnCompletion": true
+        },
+        "policy": {
+          "secureInput": false
+        },
+        "name": "Ingest",
+        "dependsOn": [
+          {
+            "activity": "Set Last Process Date",
+            "dependencyConditions": [
+              "Succeeded"
+            ]
+          },
+          {
+            "activity": "IngestJSON",
+            "dependencyConditions": [
+              "Succeeded"
+            ]
+          }
+        ]
+      },
+      {
+        "type": "TridentNotebook",
+        "typeProperties": {
+          "notebookId": "0729c958-ba1e-a9ba-481d-b320d0393b2e",
+          "workspaceId": "00000000-0000-0000-0000-000000000000",
+          "parameters": {
+            "run_id": {
+              "value": {
+                "value": "@pipeline().RunId",
+                "type": "Expression"
+              },
+              "type": "string"
+            },
+            "full_process": {
+              "value": {
+                "value": "@pipeline().parameters.par_full_process",
+                "type": "Expression"
+              },
+              "type": "string"
+            },
+            "trigger_name": {
+              "value": {
+                "value": "@pipeline().parameters.par_trigger_name",
+                "type": "Expression"
+              },
+              "type": "string"
+            },
+            "ingest_entities": {
+              "value": {
+                "value": "@string(pipeline().parameters.par_ingest_entities)",
+                "type": "Expression"
+              },
+              "type": "string"
+            },
+            "raw_entities": {
+              "value": {
+                "value": "@string(pipeline().parameters.par_raw_entities)",
+                "type": "Expression"
+              },
+              "type": "string"
+            },
+            "enriched_entities": {
+              "value": {
+                "value": "@string(pipeline().parameters.par_enriched_entities)",
+                "type": "Expression"
+              },
+              "type": "string"
+            },
+            "curated_entities": {
+              "value": {
+                "value": "@string(pipeline().parameters.par_curated_entities)",
+                "type": "Expression"
+              },
+              "type": "string"
+            }
+          }
+        },
+        "policy": {
+          "timeout": "0.12:00:00",
+          "retry": 0,
+          "retryIntervalInSeconds": 30,
+          "secureInput": false,
+          "secureOutput": false
+        },
+        "name": "Set Global Process",
+        "dependsOn": []
+      },
+      {
+        "type": "ExecutePipeline",
+        "typeProperties": {
+          "pipeline": {
+            "referenceName": "e2f12349-5610-b61a-42f5-11f4e274e672",
+            "type": "PipelineReference"
+          },
+          "parameters": {
+            "par_global_run_id": {
+              "value": "@pipeline().RunId",
+              "type": "Expression"
+            },
+            "par_entities": {
+              "value": "@activity('RawJSON').output.value",
+              "type": "Expression"
+            },
+            "par_trigger_name": {
+              "value": "@pipeline().parameters.par_trigger_name",
+              "type": "Expression"
+            },
+            "par_full_process": {
+              "value": "@pipeline().parameters.par_full_process",
+              "type": "Expression"
+            }
+          },
+          "waitOnCompletion": true
+        },
+        "policy": {
+          "secureInput": false
+        },
+        "name": "raw",
+        "dependsOn": [
+          {
+            "activity": "Ingest",
+            "dependencyConditions": [
+              "Completed"
+            ]
+          },
+          {
+            "activity": "RawJSON",
+            "dependencyConditions": [
+              "Succeeded"
+            ]
+          }
+        ]
+      },
+      {
+        "type": "SetVariable",
+        "typeProperties": {
+          "variableName": "var_lastprocess",
+          "value": {
+            "value": "@json(string(json(string(activity('Set Global Process').output)).result)).exitValue",
+            "type": "Expression"
+          }
+        },
+        "policy": {
+          "secureInput": false,
+          "secureOutput": false
+        },
+        "name": "Set Last Process Date",
+        "dependsOn": [
+          {
+            "activity": "Set Global Process",
+            "dependencyConditions": [
+              "Succeeded"
+            ]
+          }
+        ]
+      },
+      {
+        "type": "Lookup",
+        "typeProperties": {
+          "source": {
+            "type": "JsonSource",
+            "formatSettings": {
+              "type": "JsonReadSettings"
+            },
+            "storeSettings": {
+              "type": "LakehouseReadSettings",
+              "recursive": true,
+              "enablePartitionDiscovery": false
+            }
+          },
+          "datasetSettings": {
+            "type": "Json",
+            "typeProperties": {
+              "location": {
+                "type": "LakehouseLocation",
+                "folderPath": "cfg",
+                "fileName": "ingest_orchestrator.json"
+              }
+            },
+            "schema": {},
+            "linkedService": {
+              "name": "ADW2022LH",
+              "properties": {
+                "type": "Lakehouse",
+                "typeProperties": {
+                  "artifactId": "ebc4c529-823c-8194-4fdc-5139f30f22e4",
+                  "workspaceId": "00000000-0000-0000-0000-000000000000",
+                  "rootFolder": "Files"
+                },
+                "annotations": []
+              }
+            },
+            "annotations": []
+          },
+          "firstRowOnly": false
+        },
+        "policy": {
+          "timeout": "0.12:00:00",
+          "retry": 0,
+          "retryIntervalInSeconds": 30,
+          "secureInput": false,
+          "secureOutput": false
+        },
+        "name": "IngestJSON",
+        "dependsOn": []
+      },
+      {
+        "type": "Lookup",
+        "typeProperties": {
+          "source": {
+            "type": "JsonSource",
+            "formatSettings": {
+              "type": "JsonReadSettings"
+            },
+            "storeSettings": {
+              "type": "LakehouseReadSettings",
+              "recursive": true,
+              "enablePartitionDiscovery": false
+            }
+          },
+          "datasetSettings": {
+            "type": "Json",
+            "typeProperties": {
+              "location": {
+                "type": "LakehouseLocation",
+                "folderPath": "cfg",
+                "fileName": "raw_orchestrator.json"
+              }
+            },
+            "schema": {},
+            "linkedService": {
+              "name": "ADW2022LH",
+              "properties": {
+                "type": "Lakehouse",
+                "typeProperties": {
+                  "artifactId": "ebc4c529-823c-8194-4fdc-5139f30f22e4",
+                  "workspaceId": "00000000-0000-0000-0000-000000000000",
+                  "rootFolder": "Files"
+                },
+                "annotations": []
+              }
+            },
+            "annotations": []
+          },
+          "firstRowOnly": false
+        },
+        "policy": {
+          "timeout": "0.12:00:00",
+          "retry": 0,
+          "retryIntervalInSeconds": 30,
+          "secureInput": false,
+          "secureOutput": false
+        },
+        "name": "RawJSON",
+        "dependsOn": []
+      },
+      {
+        "type": "Lookup",
+        "typeProperties": {
+          "source": {
+            "type": "JsonSource",
+            "formatSettings": {
+              "type": "JsonReadSettings"
+            },
+            "storeSettings": {
+              "type": "LakehouseReadSettings",
+              "recursive": true,
+              "enablePartitionDiscovery": false
+            }
+          },
+          "datasetSettings": {
+            "type": "Json",
+            "typeProperties": {
+              "location": {
+                "type": "LakehouseLocation",
+                "folderPath": "cfg",
+                "fileName": "enriched_orchestrator.json"
+              }
+            },
+            "schema": {},
+            "linkedService": {
+              "name": "ADW2022LH",
+              "properties": {
+                "type": "Lakehouse",
+                "typeProperties": {
+                  "artifactId": "ebc4c529-823c-8194-4fdc-5139f30f22e4",
+                  "workspaceId": "00000000-0000-0000-0000-000000000000",
+                  "rootFolder": "Files"
+                },
+                "annotations": []
+              }
+            },
+            "annotations": []
+          },
+          "firstRowOnly": false
+        },
+        "policy": {
+          "timeout": "0.12:00:00",
+          "retry": 0,
+          "retryIntervalInSeconds": 30,
+          "secureInput": false,
+          "secureOutput": false
+        },
+        "name": "EnrichedJSON",
+        "dependsOn": []
+      },
+      {
+        "type": "ExecutePipeline",
+        "typeProperties": {
+          "pipeline": {
+            "referenceName": "e2f12349-5610-b61a-42f5-11f4e274e672",
+            "type": "PipelineReference"
+          },
+          "parameters": {
+            "par_global_run_id": {
+              "value": "@pipeline().RunId",
+              "type": "Expression"
+            },
+            "par_entities": {
+              "value": "@activity('EnrichedJSON').output.value",
+              "type": "Expression"
+            },
+            "par_trigger_name": {
+              "value": "@pipeline().parameters.par_trigger_name",
+              "type": "Expression"
+            },
+            "par_full_process": {
+              "value": "@pipeline().parameters.par_full_process",
+              "type": "Expression"
+            }
+          },
+          "waitOnCompletion": true
+        },
+        "policy": {
+          "secureInput": false
+        },
+        "name": "enriched",
+        "dependsOn": [
+          {
+            "activity": "raw",
+            "dependencyConditions": [
+              "Completed"
+            ]
+          },
+          {
+            "activity": "EnrichedJSON",
+            "dependencyConditions": [
+              "Succeeded"
+            ]
+          }
+        ]
+      },
+      {
+        "type": "Lookup",
+        "typeProperties": {
+          "source": {
+            "type": "JsonSource",
+            "formatSettings": {
+              "type": "JsonReadSettings"
+            },
+            "storeSettings": {
+              "type": "LakehouseReadSettings",
+              "recursive": true,
+              "enablePartitionDiscovery": false
+            }
+          },
+          "datasetSettings": {
+            "type": "Json",
+            "typeProperties": {
+              "location": {
+                "type": "LakehouseLocation",
+                "folderPath": "cfg",
+                "fileName": "curated_orchestrator.json"
+              }
+            },
+            "schema": {},
+            "linkedService": {
+              "name": "ADW2022LH",
+              "properties": {
+                "type": "Lakehouse",
+                "typeProperties": {
+                  "artifactId": "ebc4c529-823c-8194-4fdc-5139f30f22e4",
+                  "workspaceId": "00000000-0000-0000-0000-000000000000",
+                  "rootFolder": "Files"
+                },
+                "annotations": []
+              }
+            },
+            "annotations": []
+          },
+          "firstRowOnly": false
+        },
+        "policy": {
+          "timeout": "0.12:00:00",
+          "retry": 0,
+          "retryIntervalInSeconds": 30,
+          "secureInput": false,
+          "secureOutput": false
+        },
+        "name": "CuratedJSON",
+        "dependsOn": []
+      },
+      {
+        "type": "ExecutePipeline",
+        "typeProperties": {
+          "pipeline": {
+            "referenceName": "e2f12349-5610-b61a-42f5-11f4e274e672",
+            "type": "PipelineReference"
+          },
+          "parameters": {
+            "par_global_run_id": {
+              "value": "@pipeline().RunId",
+              "type": "Expression"
+            },
+            "par_entities": {
+              "value": "@activity('CuratedJSON').output.value",
+              "type": "Expression"
+            },
+            "par_trigger_name": {
+              "value": "@pipeline().parameters.par_trigger_name",
+              "type": "Expression"
+            },
+            "par_full_process": {
+              "value": "@pipeline().parameters.par_full_process",
+              "type": "Expression"
+            }
+          },
+          "waitOnCompletion": true
+        },
+        "policy": {
+          "secureInput": false
+        },
+        "name": "curated",
+        "dependsOn": [
+          {
+            "activity": "CuratedJSON",
+            "dependencyConditions": [
+              "Succeeded"
+            ]
+          },
+          {
+            "activity": "enriched",
+            "dependencyConditions": [
+              "Completed"
+            ]
+          }
+        ]
+      }
+    ],
+    "parameters": {
+      "par_full_process": {
+        "type": "string",
+        "defaultValue": "yes"
+      },
+      "par_trigger_name": {
+        "type": "string",
+        "defaultValue": "Main"
+      },
+      "par_ingest_entities": {
+        "type": "array"
+      },
+      "par_raw_entities": {
+        "type": "array"
+      },
+      "par_curated_entities": {
+        "type": "array"
+      },
+      "par_enriched_entities": {
+        "type": "array"
+      }
+    },
+    "variables": {
+      "var_entities": {
+        "type": "Array"
+      },
+      "var_lastprocess": {
+        "type": "String"
+      }
+    }
+  }
+}

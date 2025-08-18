@@ -1,0 +1,11 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/gitIntegration/platformProperties/2.0.0/schema.json",
+  "metadata": {
+    "type": "DataPipeline",
+    "displayName": "DP700 Entity Orchestrator"
+  },
+  "config": {
+    "version": "2.0",
+    "logicalId": "564af3e0-56ac-b613-4743-b31b09bbf610"
+  }
+}

@@ -1,0 +1,113 @@
+table 'Time Intelligence'
+	lineageTag: 438ab48d-dc0c-425a-8ffa-8b617a36356c
+
+	measure 'YearMonth Selected' = ```
+			
+			var _rows =countrows('Time Intelligence')
+			var _max = max('Time Intelligence'[YearMonth]) 
+			var _hoy = FORMAT(TODAY(),"yyyyMM")*1
+			var _isselected = TRUNC(DIVIDE(1,_rows),0) --- si es 1 se ha seleccionado un mes
+			return
+			(_hoy * (1-_isselected) ) + (_max * _isselected)  
+			```
+		lineageTag: c2a99a93-f1bd-422d-9847-4195a2666521
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Date to' = ```
+			
+			var _year = [YearMonth Selected] 
+			return
+			CALCULATE(LASTDATE('Time Intelligence'[to Date]),FILTER(VALUES('Time Intelligence'[YearMonth]),'Time Intelligence'[YearMonth]=_year))
+			```
+		formatString: dd/mm/yyyy
+		lineageTag: 42b74f7f-0c15-488f-893c-294ee0685c4a
+
+		annotation PBI_FormatHint = {"isDateTimeCustom":true}
+
+	measure 'Month From' = ```
+			
+			var _year = [YearMonth Selected]
+			return 
+			CALCULATE(FIRSTDATE('Time Intelligence'[from Date]),FILTER(VALUES('Time Intelligence'[YearMonth]),'Time Intelligence'[YearMonth]=_year))
+			```
+		formatString: General Date
+		lineageTag: 0c1a96cc-8988-490a-9a38-32b855fe24d6
+
+	measure 'Year From' = ```
+			
+			var _year = [YearMonth Selected]
+			return 
+			CALCULATE(FIRSTDATE('Time Intelligence'[YearFrom]),FILTER(VALUES('Time Intelligence'[YearMonth]),'Time Intelligence'[YearMonth]=_year))
+			```
+		formatString: General Date
+		lineageTag: 02c893f7-fdad-4552-9b2c-566fb7b0c5bd
+
+	column 'to Date'
+		formatString: General Date
+		lineageTag: 138dc00d-66f1-487b-afc4-5a0db82dc5bd
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [to Date]
+
+		variation Variation
+			isDefault
+			relationship: 761ceaf9-ac31-48bf-aa7a-2c8ae3ec3112
+			defaultHierarchy: LocalDateTable_ea2743e3-a039-4dec-8ad7-1eb5da21ea01.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'from Date'
+		formatString: General Date
+		lineageTag: 03d71f08-cadd-41a4-8f4b-54bb36450d30
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [from Date]
+
+		variation Variation
+			isDefault
+			relationship: 2296b962-edea-4743-9a54-424a996b56c9
+			defaultHierarchy: LocalDateTable_f5cca116-b796-4697-b221-990d60586a27.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+	column MonthYear
+		lineageTag: a5949761-20a2-4210-a030-824f65091ae5
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: Calendar[MonthYear]
+		sortByColumn: YearMonth
+
+		annotation SummarizationSetBy = Automatic
+
+	column YearMonth
+		formatString: 0
+		lineageTag: 8a18086e-a340-4077-8845-f6d20006eab6
+		summarizeBy: sum
+		isNameInferred
+		sourceColumn: Calendar[YearMonth]
+
+		annotation SummarizationSetBy = Automatic
+
+	column YearFrom
+		formatString: General Date
+		lineageTag: 34e53928-8773-48c6-9193-b78d9a6a2604
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [YearFrom]
+
+		variation Variation
+			isDefault
+			relationship: 23797807-3f9f-48da-a667-33650b2f4588
+			defaultHierarchy: LocalDateTable_90a34dca-4e12-4e3b-9ca3-1fe38c48ff39.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+	partition 'Time Intelligence' = calculated
+		mode: import
+		source = ```
+				SUMMARIZECOLUMNS('Calendar'[MonthYear],'Calendar'[YearMonth],"from Date",min('Calendar'[Date]),"to Date",max('Calendar'[Date]),"YearFrom",EOMONTH(max('Calendar'[Date]),-12)+1) 
+				```
+
+	annotation PBI_Id = d5b89098fe704b88bb71cf0f2cd1c06c
+

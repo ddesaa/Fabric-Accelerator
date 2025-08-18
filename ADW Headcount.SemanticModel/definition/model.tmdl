@@ -1,0 +1,33 @@
+model Model
+	culture: en-US
+	defaultPowerBIDataSourceVersion: powerBI_V3
+	discourageImplicitMeasures
+	sourceQueryCulture: en-US
+	dataAccessOptions
+		legacyRedirects
+		returnErrorValuesAsNull
+
+annotation PBI_QueryOrder = ["headcount","headcount_by_month","Department","Employee","Calendar","Salesperson","Shift"]
+
+annotation __PBI_TimeIntelligenceEnabled = 1
+
+annotation PBIDesktopVersion = 2.145.1602.0 (25.07)+10647c9fa319b5e39936cdb21328038c371d1fe4
+
+annotation PBI_ProTooling = ["CalcGroup"]
+
+ref table headcount
+ref table headcount_by_month
+ref table Department
+ref table Employee
+ref table Calendar
+ref table Salesperson
+ref table Shift
+ref table 'Time Intelligence'
+ref table DateTableTemplate_8e682c66-31dc-4740-9088-2eae7fdacb9f
+ref table LocalDateTable_ea2743e3-a039-4dec-8ad7-1eb5da21ea01
+ref table LocalDateTable_f5cca116-b796-4697-b221-990d60586a27
+ref table LocalDateTable_90a34dca-4e12-4e3b-9ca3-1fe38c48ff39
+ref table 'Time Itelligence Group'
+
+ref cultureInfo en-US
+

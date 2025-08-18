@@ -1,0 +1,361 @@
+{
+  "properties": {
+    "activities": [
+      {
+        "type": "SetVariable",
+        "typeProperties": {
+          "variableName": "var_start_time",
+          "value": {
+            "value": "@formatDateTime(convertTimeZone(utcNow(), 'UTC',pipeline().parameters.par_datetime_region),'yyyy-MM-ddThh:mm:ss')",
+            "type": "Expression"
+          }
+        },
+        "policy": {
+          "secureInput": false,
+          "secureOutput": false
+        },
+        "name": "Set start time",
+        "dependsOn": []
+      },
+      {
+        "type": "SetVariable",
+        "typeProperties": {
+          "variableName": "var_target_folder",
+          "value": {
+            "value": "@concat(pipeline().parameters.par_target_folder,formatDateTime(convertTimeZone(utcNow(), 'UTC', pipeline().parameters.par_datetime_region),'/yyyy/MM/dd/HHmm'))",
+            "type": "Expression"
+          }
+        },
+        "policy": {
+          "secureInput": false,
+          "secureOutput": false
+        },
+        "name": "Set Folder",
+        "dependsOn": [
+          {
+            "activity": "Set start time",
+            "dependencyConditions": [
+              "Succeeded"
+            ]
+          }
+        ]
+      },
+      {
+        "type": "Copy",
+        "typeProperties": {
+          "source": {
+            "type": "AzureSqlSource",
+            "sqlReaderQuery": {
+              "value": "@variables('var_query')",
+              "type": "Expression"
+            },
+            "partitionOption": "None",
+            "queryTimeout": "02:00:00",
+            "datasetSettings": {
+              "type": "AzureSqlTable",
+              "schema": [],
+              "externalReferences": {
+                "connection": "@pipeline().parameters.par_source_container"
+              },
+              "annotations": []
+            }
+          },
+          "sink": {
+            "type": "DelimitedTextSink",
+            "formatSettings": {
+              "type": "DelimitedTextWriteSettings",
+              "fileExtension": ".txt"
+            },
+            "storeSettings": {
+              "type": "LakehouseWriteSettings"
+            },
+            "datasetSettings": {
+              "type": "DelimitedText",
+              "typeProperties": {
+                "location": {
+                  "type": "LakehouseLocation",
+                  "folderPath": {
+                    "value": "@variables('var_target_folder')",
+                    "type": "Expression"
+                  },
+                  "fileName": {
+                    "value": "@pipeline().parameters.par_target_file",
+                    "type": "Expression"
+                  }
+                },
+                "columnDelimiter": ",",
+                "quoteChar": "\"",
+                "escapeChar": "\\",
+                "firstRowAsHeader": true
+              },
+              "schema": [],
+              "linkedService": {
+                "name": "LH_Bronze",
+                "properties": {
+                  "type": "Lakehouse",
+                  "typeProperties": {
+                    "artifactId": "96b969cb-6a91-9c4e-46f9-057b2b79c000",
+                    "workspaceId": "00000000-0000-0000-0000-000000000000",
+                    "rootFolder": "Files"
+                  },
+                  "annotations": []
+                }
+              },
+              "annotations": []
+            }
+          },
+          "translator": {
+            "type": "TabularTranslator",
+            "typeConversion": true,
+            "typeConversionSettings": {
+              "allowDataTruncation": true,
+              "treatBooleanAsNumber": false
+            }
+          },
+          "enableStaging": false
+        },
+        "policy": {
+          "timeout": "0.12:00:00",
+          "retry": 0,
+          "retryIntervalInSeconds": 30,
+          "secureInput": false,
+          "secureOutput": false
+        },
+        "name": "Copy asql to LH parquet",
+        "dependsOn": [
+          {
+            "activity": "Set Folder",
+            "dependencyConditions": [
+              "Succeeded"
+            ]
+          },
+          {
+            "activity": "Set Query",
+            "dependencyConditions": [
+              "Succeeded"
+            ]
+          }
+        ]
+      },
+      {
+        "type": "SqlServerStoredProcedure",
+        "typeProperties": {
+          "storedProcedureName": "[cfg].[usp_put_integration_lineage]",
+          "storedProcedureParameters": {
+            "global_run_id": {
+              "value": {
+                "value": "@pipeline().parameters.par_global_run_id",
+                "type": "Expression"
+              },
+              "type": "String"
+            },
+            "log": {
+              "value": {
+                "value": "@variables('var_log')",
+                "type": "Expression"
+              },
+              "type": "String"
+            },
+            "process_step": {
+              "value": {
+                "value": "@pipeline().parameters.par_process_step",
+                "type": "Expression"
+              },
+              "type": "String"
+            },
+            "entity": {
+              "value": {
+                "value": "@pipeline().parameters.par_entity",
+                "type": "Expression"
+              },
+              "type": "String"
+            },
+            "run_id": {
+              "value": {
+                "value": "@pipeline().parameters.par_global_run_id",
+                "type": "Expression"
+              },
+              "type": "String"
+            },
+            "sys_end_time": {
+              "value": {
+                "value": "@variables('var_end_time')",
+                "type": "Expression"
+              },
+              "type": "DateTime"
+            },
+            "sys_start_time": {
+              "value": {
+                "value": "@variables('var_start_time')",
+                "type": "Expression"
+              },
+              "type": "DateTime"
+            }
+          }
+        },
+        "connectionSettings": {
+          "name": "dbControl",
+          "properties": {
+            "type": "FabricSqlDatabase",
+            "typeProperties": {
+              "artifactId": "72fb3a2c-0568-ae16-4a80-4edcd92c58ea",
+              "workspaceId": "00000000-0000-0000-0000-000000000000"
+            },
+            "externalReferences": {
+              "connection": "d5658a97-bffd-460a-9802-eac1477d6c1c"
+            },
+            "annotations": []
+          }
+        },
+        "policy": {
+          "timeout": "0.12:00:00",
+          "retry": 0,
+          "retryIntervalInSeconds": 30,
+          "secureInput": false,
+          "secureOutput": false
+        },
+        "name": "sp Log",
+        "dependsOn": [
+          {
+            "activity": "Set log",
+            "dependencyConditions": [
+              "Succeeded"
+            ]
+          }
+        ]
+      },
+      {
+        "type": "SetVariable",
+        "typeProperties": {
+          "variableName": "var_end_time",
+          "value": {
+            "value": "@formatDateTime(convertfromutc(utcNow(),pipeline().parameters.par_datetime_region),'yyyy-MM-ddThh:mm:ss')",
+            "type": "Expression"
+          }
+        },
+        "policy": {
+          "secureInput": false,
+          "secureOutput": false
+        },
+        "name": "set end Process",
+        "dependsOn": [
+          {
+            "activity": "Copy asql to LH parquet",
+            "dependencyConditions": [
+              "Succeeded"
+            ]
+          }
+        ]
+      },
+      {
+        "type": "SetVariable",
+        "typeProperties": {
+          "variableName": "var_log",
+          "value": {
+            "value": "@replace(replace(replace(replace(replace(variables('var_initial_log'),'<query>',pipeline().parameters.par_query),'<destination_folder>',variables('var_target_folder')),\n'<source_container>',pipeline().parameters.par_source_container),'<destination_container>',pipeline().parameters.par_target_container),'<filename>',pipeline().parameters.par_target_file)",
+            "type": "Expression"
+          }
+        },
+        "policy": {
+          "secureInput": false,
+          "secureOutput": false
+        },
+        "name": "Set log",
+        "dependsOn": [
+          {
+            "activity": "set end Process",
+            "dependencyConditions": [
+              "Succeeded"
+            ]
+          }
+        ]
+      },
+      {
+        "type": "SetVariable",
+        "typeProperties": {
+          "variableName": "var_query",
+          "value": {
+            "value": "@replace(pipeline().parameters.par_query,'<last_process>',pipeline().parameters.par_lastdate_process)",
+            "type": "Expression"
+          }
+        },
+        "policy": {
+          "secureInput": false,
+          "secureOutput": false
+        },
+        "name": "Set Query",
+        "dependsOn": [
+          {
+            "activity": "Set start time",
+            "dependencyConditions": [
+              "Succeeded"
+            ]
+          }
+        ]
+      }
+    ],
+    "parameters": {
+      "par_target_folder": {
+        "type": "String",
+        "defaultValue": "landing"
+      },
+      "par_target_file": {
+        "type": "String"
+      },
+      "par_global_run_id": {
+        "type": "string"
+      },
+      "par_entity": {
+        "type": "string"
+      },
+      "par_lastdate_process": {
+        "type": "string"
+      },
+      "par_datetime_region": {
+        "type": "string"
+      },
+      "par_target_container": {
+        "type": "string"
+      },
+      "par_source_container": {
+        "type": "string",
+        "defaultValue": "369270c2-ead7-4b8e-b80e-8d12455f91dc"
+      },
+      "par_query": {
+        "type": "string",
+        "defaultValue": "select * from [Person].[Person]"
+      },
+      "par_process_step": {
+        "type": "string"
+      }
+    },
+    "variables": {
+      "var_entities": {
+        "type": "Array"
+      },
+      "var_start_time": {
+        "type": "String"
+      },
+      "var_target_folder": {
+        "type": "String"
+      },
+      "var_lastmodifiedfile": {
+        "type": "String"
+      },
+      "var_end_time": {
+        "type": "String"
+      },
+      "var_log": {
+        "type": "String",
+        "defaultValue": "{     \"source_container\": \"<source_container>\",     \"destination_container\": \"<destination_container>\",     \"destination_folder\": \"<destination_folder>\",     \"query\": \"<query>\",     \"filename\": \"<filename>\"   }"
+      },
+      "var_initial_log": {
+        "type": "String",
+        "defaultValue": "{     \"source_container\": \"<source_container>\",     \"destination_container\": \"<destination_container>\",     \"destination_folder\": \"<destination_folder>\",     \"query\": \"<query>\",     \"filename\": \"<filename>\",     \"file_type\": \"<file_type>\" }"
+      },
+      "var_query": {
+        "type": "String"
+      }
+    }
+  }
+}

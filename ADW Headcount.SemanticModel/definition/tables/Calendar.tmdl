@@ -1,0 +1,125 @@
+table Calendar
+	lineageTag: 515e26aa-f6fb-4c69-a4c7-6df30d0aebe5
+
+	column DateID
+		dataType: int64
+		isNullable: false
+		formatString: 0
+		sourceProviderType: int
+		lineageTag: 33cb3c7b-38ca-413c-a0dd-003d72cc23d2
+		summarizeBy: none
+		sourceColumn: DateID
+
+		annotation SummarizationSetBy = Automatic
+
+	column Date
+		dataType: dateTime
+		isNullable: false
+		formatString: dd/mm/yyyy
+		sourceProviderType: date
+		lineageTag: a4d8ba01-6ad4-49cc-a30b-d96d4b2ffb27
+		summarizeBy: none
+		sourceColumn: Date
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+		annotation PBI_FormatHint = {"isDateTimeCustom":true}
+
+	column Year
+		dataType: int64
+		isNullable: false
+		formatString: 0
+		sourceProviderType: int
+		lineageTag: 186d589b-6ce4-4021-ae67-1adc65186a62
+		summarizeBy: none
+		sourceColumn: Year
+
+		annotation SummarizationSetBy = User
+
+	column Month
+		dataType: int64
+		isNullable: false
+		formatString: 0
+		sourceProviderType: int
+		lineageTag: 5a35f002-7bc7-4e4d-a575-8e247f16df0b
+		summarizeBy: none
+		sourceColumn: Month
+
+		annotation SummarizationSetBy = User
+
+	column MonthName
+		dataType: string
+		isNullable: false
+		sourceProviderType: varchar(8000)
+		lineageTag: 8fb60c77-9544-409b-96c8-93f85d6aa40a
+		summarizeBy: none
+		sourceColumn: MonthName
+		sortByColumn: Month
+
+		changedProperty = SortByColumn
+
+		annotation SummarizationSetBy = Automatic
+
+	column WeekDay
+		dataType: int64
+		isNullable: false
+		formatString: 0
+		sourceProviderType: int
+		lineageTag: 8583fe62-2d80-434b-b737-7aa174274854
+		summarizeBy: none
+		sourceColumn: WeekDay
+
+		annotation SummarizationSetBy = User
+
+	column WeekDayName
+		dataType: string
+		isNullable: false
+		sourceProviderType: varchar(8000)
+		lineageTag: fcb29fb2-b520-4c25-9901-fa56ceb1884b
+		summarizeBy: none
+		sourceColumn: WeekDayName
+		sortByColumn: WeekDay
+
+		changedProperty = SortByColumn
+
+		annotation SummarizationSetBy = Automatic
+
+	column YearMonth
+		dataType: int64
+		isNullable: false
+		formatString: 0
+		sourceProviderType: int
+		lineageTag: bde734dc-dc97-45a5-a2af-c56b218f0675
+		summarizeBy: none
+		sourceColumn: YearMonth
+
+		annotation SummarizationSetBy = User
+
+	column MonthYear
+		dataType: string
+		isNullable: false
+		sourceProviderType: varchar(8000)
+		lineageTag: 4b34bb33-81b5-4393-86dc-10ee46903299
+		summarizeBy: none
+		sourceColumn: MonthYear
+		sortByColumn: YearMonth
+
+		changedProperty = SortByColumn
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Calendar = m
+		mode: dual
+		source =
+				let
+				    Source = Sql.Database("pzo62lnr7m2ura6lib4hcu6cua-geundog74veuvk5fqtrsrqaoya.datawarehouse.fabric.microsoft.com", "LH_Gold"),
+				    Silver_calendar = Source{[Schema="Silver",Item="calendar"]}[Data]
+				in
+				    Silver_calendar
+
+	changedProperty = Name
+
+	annotation PBI_ResultType = Table
+

@@ -1,0 +1,141 @@
+{
+  "properties": {
+    "activities": [
+      {
+        "type": "Lookup",
+        "typeProperties": {
+          "source": {
+            "type": "FabricSqlDatabaseSource",
+            "sqlReaderStoredProcedureName": "[cfg].[usp_get_integration_settings]",
+            "storedProcedureParameters": {
+              "integration_key": {
+                "value": {
+                  "value": "@pipeline().parameters.integration_key",
+                  "type": "Expression"
+                },
+                "type": "Int32"
+              },
+              "is_full_process": {
+                "value": {
+                  "value": "@pipeline().parameters.full_process",
+                  "type": "Expression"
+                },
+                "type": "String"
+              }
+            },
+            "partitionOption": "None",
+            "queryTimeout": "02:00:00"
+          },
+          "datasetSettings": {
+            "type": "FabricSqlDatabaseTable",
+            "schema": [],
+            "connectionSettings": {
+              "name": "dbControl",
+              "properties": {
+                "type": "FabricSqlDatabase",
+                "typeProperties": {
+                  "artifactId": "72fb3a2c-0568-ae16-4a80-4edcd92c58ea",
+                  "workspaceId": "00000000-0000-0000-0000-000000000000"
+                },
+                "externalReferences": {
+                  "connection": "d5658a97-bffd-460a-9802-eac1477d6c1c"
+                },
+                "annotations": []
+              }
+            },
+            "annotations": []
+          },
+          "firstRowOnly": false
+        },
+        "policy": {
+          "timeout": "0.12:00:00",
+          "retry": 0,
+          "retryIntervalInSeconds": 30,
+          "secureInput": false,
+          "secureOutput": false
+        },
+        "name": "lkpEntities",
+        "dependsOn": []
+      },
+      {
+        "type": "ForEach",
+        "typeProperties": {
+          "items": {
+            "value": "@activity('lkpEntities').output.value",
+            "type": "Expression"
+          },
+          "activities": [
+            {
+              "type": "ExecutePipeline",
+              "typeProperties": {
+                "pipeline": {
+                  "referenceName": "564af3e0-56ac-b613-4743-b31b09bbf610",
+                  "type": "PipelineReference"
+                },
+                "parameters": {
+                  "global_run_id": {
+                    "value": "@pipeline().parameters.global_run_id",
+                    "type": "Expression"
+                  },
+                  "is_process_full": {
+                    "value": "@pipeline().parameters.full_process",
+                    "type": "Expression"
+                  },
+                  "integration_process_key": {
+                    "value": "@pipeline().parameters.integration_key",
+                    "type": "Expression"
+                  },
+                  "process_step": {
+                    "value": "@pipeline().parameters.process_step",
+                    "type": "Expression"
+                  },
+                  "last_process": {
+                    "value": "@item().Last_process",
+                    "type": "Expression"
+                  },
+                  "integration_setting": {
+                    "value": "@item().integration_setting",
+                    "type": "Expression"
+                  },
+                  "datetime_region": {
+                    "value": "@item().datetime_region",
+                    "type": "Expression"
+                  }
+                },
+                "waitOnCompletion": true
+              },
+              "policy": {
+                "secureInput": false
+              },
+              "name": "Invoke DP700",
+              "dependsOn": []
+            }
+          ]
+        },
+        "name": "ForEach Entity",
+        "dependsOn": [
+          {
+            "activity": "lkpEntities",
+            "dependencyConditions": [
+              "Succeeded"
+            ]
+          }
+        ]
+      }
+    ],
+    "parameters": {
+      "full_process": {
+        "type": "string"
+      },
+      "integration_key": {
+        "type": "string"
+      },
+      "global_run_id": {
+        "type": "string"
+      },
+      "process_step": {
+        "type": "string"
+      }
+    }
+  }
+}

@@ -1,0 +1,100 @@
+table headcount
+	isHidden
+	lineageTag: b1dc2ec9-2379-4b27-a886-c11fddbbab89
+
+	measure Employees = COUNTROWS(headcount)
+		formatString: 0
+		lineageTag: 095e54f3-d2af-4881-8b12-e29b1000fed0
+
+	column DateID
+		dataType: int64
+		isHidden
+		isNullable: false
+		formatString: 0
+		sourceProviderType: int
+		lineageTag: dc724ae6-d479-446e-9eee-8b6d005df395
+		summarizeBy: none
+		sourceColumn: DateID
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column EmployeeID
+		dataType: int64
+		isHidden
+		formatString: 0
+		sourceProviderType: int
+		lineageTag: d85d2e02-06a7-4487-84b1-55a8d3e23886
+		summarizeBy: none
+		sourceColumn: EmployeeID
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column DepartmentID
+		dataType: int64
+		isHidden
+		formatString: 0
+		sourceProviderType: int
+		lineageTag: b26ce722-3a1e-4ea9-b76e-24d005017e45
+		summarizeBy: none
+		sourceColumn: DepartmentID
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column ShiftID
+		dataType: int64
+		isHidden
+		formatString: 0
+		sourceProviderType: int
+		lineageTag: cca24bbe-1bfa-47a3-851f-8c508010f83c
+		summarizeBy: none
+		sourceColumn: ShiftID
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column SalesPersonID
+		dataType: int64
+		isHidden
+		formatString: 0
+		sourceProviderType: int
+		lineageTag: b6f6aa91-4cd2-456d-878b-ec03eed4ef9f
+		summarizeBy: none
+		sourceColumn: SalesPersonID
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column SYS_Run_ID
+		dataType: string
+		isHidden
+		isNullable: false
+		sourceProviderType: varchar(8000)
+		lineageTag: b787ea4f-0df4-49e7-9934-13be7dec7e8b
+		summarizeBy: none
+		sourceColumn: SYS_Run_ID
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	partition headcount = m
+		mode: directQuery
+		source =
+				let
+				    Source = Sql.Database("pzo62lnr7m2ura6lib4hcu6cua-geundog74veuvk5fqtrsrqaoya.datawarehouse.fabric.microsoft.com", "LH_Gold"),
+				    dbo_headcount = Source{[Schema="dbo",Item="headcount"]}[Data]
+				in
+				    dbo_headcount
+
+	changedProperty = IsHidden
+
+	annotation PBI_ResultType = Table
+

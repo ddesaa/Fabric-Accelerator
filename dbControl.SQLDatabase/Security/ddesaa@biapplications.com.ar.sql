@@ -1,0 +1,6 @@
+CREATE USER [ddesaa@biapplications.com.ar]
+    WITH SID = 0xB81B30759E9CEC4CA9F5024E9B7BDEB0, TYPE = E;
+
+
+GO
+

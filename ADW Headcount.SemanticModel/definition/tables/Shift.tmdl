@@ -1,0 +1,73 @@
+table Shift
+	lineageTag: bef90424-5a5c-4fd2-b7bf-b49b966eeeab
+
+	column ShiftID
+		dataType: int64
+		formatString: 0
+		sourceProviderType: int
+		lineageTag: 91fab9ce-b99d-4b4e-b1fd-aad4b75d1468
+		summarizeBy: none
+		sourceColumn: ShiftID
+
+		annotation SummarizationSetBy = Automatic
+
+	column Name
+		dataType: string
+		sourceProviderType: varchar(8000)
+		lineageTag: ba06b36a-3f5b-4831-bebf-a5112c11937b
+		summarizeBy: none
+		sourceColumn: Name
+
+		annotation SummarizationSetBy = Automatic
+
+	column StartTime
+		dataType: dateTime
+		formatString: General Date
+		sourceProviderType: datetime2
+		lineageTag: b70e575e-5703-479d-a254-7ea2aedbbccb
+		summarizeBy: none
+		sourceColumn: StartTime
+
+		annotation SummarizationSetBy = Automatic
+
+	column EndTime
+		dataType: dateTime
+		formatString: General Date
+		sourceProviderType: datetime2
+		lineageTag: ef8caaa1-14bd-495a-a50d-b20ec642a4e2
+		summarizeBy: none
+		sourceColumn: EndTime
+
+		annotation SummarizationSetBy = Automatic
+
+	column ModifiedDate
+		dataType: dateTime
+		formatString: General Date
+		sourceProviderType: datetime2
+		lineageTag: a3db8767-c1f5-4f8b-be44-7f3c8cf0d8ee
+		summarizeBy: none
+		sourceColumn: ModifiedDate
+
+		annotation SummarizationSetBy = Automatic
+
+	column SYS_Run_ID
+		dataType: string
+		isNullable: false
+		sourceProviderType: varchar(8000)
+		lineageTag: a5b0530f-4467-4794-8313-a3d285cc6d6e
+		summarizeBy: none
+		sourceColumn: SYS_Run_ID
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Shift = m
+		mode: dual
+		source =
+				let
+				    Source = Sql.Database("pzo62lnr7m2ura6lib4hcu6cua-geundog74veuvk5fqtrsrqaoya.datawarehouse.fabric.microsoft.com", "LH_Gold"),
+				    Bronze_shift = Source{[Schema="Bronze",Item="shift"]}[Data]
+				in
+				    Bronze_shift
+
+	annotation PBI_ResultType = Table
+

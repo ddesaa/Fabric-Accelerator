@@ -1,0 +1,54 @@
+table Department
+	lineageTag: aea7f800-69da-409a-a6d1-0cd93f03e8ad
+
+	column DepartmentID
+		dataType: int64
+		formatString: 0
+		sourceProviderType: int
+		lineageTag: fccbf364-9ab9-4b46-b366-34a475e4a770
+		summarizeBy: none
+		sourceColumn: DepartmentID
+
+		annotation SummarizationSetBy = Automatic
+
+	column Department
+		dataType: string
+		isNullable: false
+		sourceProviderType: varchar(8000)
+		lineageTag: d6ddf0ad-1854-4b04-beb6-6cdbe7e12af2
+		summarizeBy: none
+		sourceColumn: Department
+
+		annotation SummarizationSetBy = Automatic
+
+	column GroupName
+		dataType: string
+		isNullable: false
+		sourceProviderType: varchar(8000)
+		lineageTag: 92436b67-7a6b-4b49-bd11-1d0db65c3857
+		summarizeBy: none
+		sourceColumn: GroupName
+
+		annotation SummarizationSetBy = Automatic
+
+	column SYS_Run_ID
+		dataType: string
+		isNullable: false
+		sourceProviderType: varchar(8000)
+		lineageTag: def3f5a7-f1af-47b1-93e5-bf7e7d0f4b6e
+		summarizeBy: none
+		sourceColumn: SYS_Run_ID
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Department = m
+		mode: dual
+		source =
+				let
+				    Source = Sql.Database("pzo62lnr7m2ura6lib4hcu6cua-geundog74veuvk5fqtrsrqaoya.datawarehouse.fabric.microsoft.com", "LH_Gold"),
+				    Silver_department = Source{[Schema="Silver",Item="department"]}[Data]
+				in
+				    Silver_department
+
+	annotation PBI_ResultType = Table
+

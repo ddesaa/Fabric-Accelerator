@@ -1,0 +1,75 @@
+table Salesperson
+	lineageTag: 9f9e0f1c-4f9e-4e8a-87db-5f3b1322a149
+
+	column SalesPersonID
+		dataType: int64
+		formatString: 0
+		sourceProviderType: int
+		lineageTag: 3b4758cf-ff7e-43c3-89bc-9b8937021663
+		summarizeBy: none
+		sourceColumn: SalesPersonID
+
+		annotation SummarizationSetBy = Automatic
+
+	column SalesPerson
+		dataType: string
+		sourceProviderType: varchar(8000)
+		lineageTag: e286b6b6-fe67-4c7c-9a6b-60edc17fff55
+		summarizeBy: none
+		sourceColumn: SalesPerson
+
+		annotation SummarizationSetBy = Automatic
+
+	column SalesTerritory
+		dataType: string
+		isNullable: false
+		sourceProviderType: varchar(8000)
+		lineageTag: f6278d5a-deb3-4789-ba1e-b01137beeaab
+		summarizeBy: none
+		sourceColumn: SalesTerritory
+
+		annotation SummarizationSetBy = Automatic
+
+	column SalesTerritoryGroup
+		dataType: string
+		isNullable: false
+		sourceProviderType: varchar(8000)
+		lineageTag: d996caba-4658-4569-bba8-9d9887543ea8
+		summarizeBy: none
+		sourceColumn: SalesTerritoryGroup
+
+		annotation SummarizationSetBy = Automatic
+
+	column SalesRegion
+		dataType: string
+		isNullable: false
+		sourceProviderType: varchar(8000)
+		lineageTag: b85a100e-fe2c-42b9-a1a0-3c825f4a9c11
+		summarizeBy: none
+		sourceColumn: SalesRegion
+
+		annotation SummarizationSetBy = Automatic
+
+	column SYS_Run_ID
+		dataType: string
+		isNullable: false
+		sourceProviderType: varchar(8000)
+		lineageTag: bb8bfc84-5146-46eb-8b1c-ddb485ae05f0
+		summarizeBy: none
+		sourceColumn: SYS_Run_ID
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Salesperson = m
+		mode: dual
+		source =
+				let
+				    Source = Sql.Database("pzo62lnr7m2ura6lib4hcu6cua-geundog74veuvk5fqtrsrqaoya.datawarehouse.fabric.microsoft.com", "LH_Gold"),
+				    Silver_salesperson = Source{[Schema="Silver",Item="salesperson"]}[Data]
+				in
+				    Silver_salesperson
+
+	changedProperty = Name
+
+	annotation PBI_ResultType = Table
+

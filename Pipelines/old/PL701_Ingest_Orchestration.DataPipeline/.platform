@@ -1,0 +1,11 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/gitIntegration/platformProperties/2.0.0/schema.json",
+  "metadata": {
+    "type": "DataPipeline",
+    "displayName": "PL701_Ingest_Orchestration"
+  },
+  "config": {
+    "version": "2.0",
+    "logicalId": "9905ef74-5a61-93de-40a5-598ae9675cf2"
+  }
+}

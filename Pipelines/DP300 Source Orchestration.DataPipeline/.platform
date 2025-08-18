@@ -1,0 +1,11 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/gitIntegration/platformProperties/2.0.0/schema.json",
+  "metadata": {
+    "type": "DataPipeline",
+    "displayName": "DP300 Source Orchestration"
+  },
+  "config": {
+    "version": "2.0",
+    "logicalId": "bc81065d-26df-b1fb-4729-8d2079dc42f0"
+  }
+}

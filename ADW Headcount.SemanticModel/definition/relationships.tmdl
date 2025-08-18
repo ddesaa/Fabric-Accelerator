@@ -1,0 +1,47 @@
+relationship adb5317c-b61e-92f6-ac17-a1d878384c72
+	fromColumn: headcount.ShiftID
+	toColumn: Shift.ShiftID
+
+relationship 24bf5e05-c2c0-5c84-e07b-a5b7573e89d3
+	fromColumn: headcount_by_month.ShiftID
+	toColumn: Shift.ShiftID
+
+relationship e636b9d6-c035-baa4-3be8-f867711a839e
+	fromColumn: headcount.DepartmentID
+	toColumn: Department.DepartmentID
+
+relationship f15afeb9-7194-3a56-2dc7-56687a1925c1
+	fromColumn: headcount_by_month.DepartmentID
+	toColumn: Department.DepartmentID
+
+relationship edd390c6-6c3b-7050-c16e-7d365e4940ad
+	fromColumn: headcount_by_month.DateID
+	toColumn: Calendar.DateID
+
+relationship c255f438-7a3e-49ce-ae36-a25646030b80
+	fromColumn: headcount.DateID
+	toColumn: Calendar.DateID
+
+relationship 89480fe4-7924-d69f-d786-616a0bf3a983
+	fromColumn: headcount.EmployeeID
+	toColumn: Employee.EmployeeID
+
+relationship de4ff6d8-1d9d-b2aa-d7ae-c3957617fd36
+	fromColumn: headcount.SalesPersonID
+	toColumn: Salesperson.SalesPersonID
+
+relationship 761ceaf9-ac31-48bf-aa7a-2c8ae3ec3112
+	joinOnDateBehavior: datePartOnly
+	fromColumn: 'Time Intelligence'.'to Date'
+	toColumn: LocalDateTable_ea2743e3-a039-4dec-8ad7-1eb5da21ea01.Date
+
+relationship 2296b962-edea-4743-9a54-424a996b56c9
+	joinOnDateBehavior: datePartOnly
+	fromColumn: 'Time Intelligence'.'from Date'
+	toColumn: LocalDateTable_f5cca116-b796-4697-b221-990d60586a27.Date
+
+relationship 23797807-3f9f-48da-a667-33650b2f4588
+	joinOnDateBehavior: datePartOnly
+	fromColumn: 'Time Intelligence'.YearFrom
+	toColumn: LocalDateTable_90a34dca-4e12-4e3b-9ca3-1fe38c48ff39.Date
+

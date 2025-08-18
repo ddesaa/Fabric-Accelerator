@@ -1,0 +1,28 @@
+[
+  {
+    "name": "Silver",
+    "path": "/Tables",
+    "target": {
+      "type": "OneLake",
+      "oneLake": {
+        "path": "Tables/dbo",
+        "itemId": "d16d2fe5-aea1-8219-4c9a-c5f01cbc6a84",
+        "workspaceId": "00000000-0000-0000-0000-000000000000",
+        "artifactType": "Lakehouse"
+      }
+    }
+  },
+  {
+    "name": "Bronze",
+    "path": "/Tables",
+    "target": {
+      "type": "OneLake",
+      "oneLake": {
+        "path": "Tables/dbo",
+        "itemId": "96b969cb-6a91-9c4e-46f9-057b2b79c000",
+        "workspaceId": "00000000-0000-0000-0000-000000000000",
+        "artifactType": "Lakehouse"
+      }
+    }
+  }
+]

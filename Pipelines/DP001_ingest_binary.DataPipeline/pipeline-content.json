@@ -1,0 +1,428 @@
+{
+  "properties": {
+    "activities": [
+      {
+        "type": "SetVariable",
+        "typeProperties": {
+          "variableName": "var_start_time",
+          "value": {
+            "value": "@formatDateTime(convertTimeZone(utcNow(), 'UTC',pipeline().parameters.par_datetime_region),'yyyy-MM-ddThh:mm:ss')",
+            "type": "Expression"
+          }
+        },
+        "policy": {
+          "secureInput": false,
+          "secureOutput": false
+        },
+        "name": "Set start time",
+        "dependsOn": []
+      },
+      {
+        "type": "SetVariable",
+        "typeProperties": {
+          "variableName": "var_target_folder",
+          "value": {
+            "value": "@concat(pipeline().parameters.par_target_folder,formatDateTime(convertTimeZone(utcNow(), 'UTC', pipeline().parameters.par_datetime_region),'/yyyy/MM/dd/HHmm'))",
+            "type": "Expression"
+          }
+        },
+        "policy": {
+          "secureInput": false,
+          "secureOutput": false
+        },
+        "name": "Set Folder",
+        "dependsOn": [
+          {
+            "activity": "Set start time",
+            "dependencyConditions": [
+              "Succeeded"
+            ]
+          }
+        ]
+      },
+      {
+        "type": "GetMetadata",
+        "typeProperties": {
+          "datasetSettings": {
+            "type": "Binary",
+            "typeProperties": {
+              "location": {
+                "type": "AzureFileStorageLocation",
+                "folderPath": {
+                  "value": "@pipeline().parameters.par_source_folder",
+                  "type": "Expression"
+                },
+                "fileName": {
+                  "value": "@pipeline().parameters.par_source_file",
+                  "type": "Expression"
+                }
+              }
+            },
+            "externalReferences": {
+              "connection": "@pipeline().parameters.par_source_container"
+            },
+            "annotations": []
+          },
+          "fieldList": [
+            "lastModified"
+          ],
+          "storeSettings": {
+            "type": "AzureFileStorageReadSettings",
+            "recursive": true,
+            "enablePartitionDiscovery": false
+          },
+          "formatSettings": {
+            "type": "BinaryReadSettings"
+          }
+        },
+        "policy": {
+          "timeout": "0.12:00:00",
+          "retry": 0,
+          "retryIntervalInSeconds": 30,
+          "secureInput": false,
+          "secureOutput": false
+        },
+        "name": "Get LastModified",
+        "dependsOn": [
+          {
+            "activity": "Set start time",
+            "dependencyConditions": [
+              "Succeeded"
+            ]
+          }
+        ]
+      },
+      {
+        "type": "SetVariable",
+        "typeProperties": {
+          "variableName": "var_lastmodifiedfile",
+          "value": {
+            "value": "@formatDateTime(activity('Get LastModified').output.lastModified,'yyyy-MM-ddThh:mm')",
+            "type": "Expression"
+          }
+        },
+        "policy": {
+          "secureInput": false,
+          "secureOutput": false
+        },
+        "name": "Set var_lastmodifiedfile",
+        "dependsOn": [
+          {
+            "activity": "Get LastModified",
+            "dependencyConditions": [
+              "Succeeded"
+            ]
+          }
+        ]
+      },
+      {
+        "type": "IfCondition",
+        "typeProperties": {
+          "expression": {
+            "value": "@greater(variables('var_lastmodifiedfile'),pipeline().parameters.par_lastdate_process)",
+            "type": "Expression"
+          },
+          "ifTrueActivities": [
+            {
+              "type": "Copy",
+              "typeProperties": {
+                "source": {
+                  "type": "BinarySource",
+                  "formatSettings": {
+                    "type": "BinaryReadSettings"
+                  },
+                  "storeSettings": {
+                    "type": "AzureFileStorageReadSettings",
+                    "recursive": false
+                  },
+                  "datasetSettings": {
+                    "type": "Binary",
+                    "typeProperties": {
+                      "location": {
+                        "type": "AzureFileStorageLocation",
+                        "folderPath": {
+                          "value": "@pipeline().parameters.par_source_folder",
+                          "type": "Expression"
+                        },
+                        "fileName": {
+                          "value": "@pipeline().parameters.par_source_file",
+                          "type": "Expression"
+                        }
+                      }
+                    },
+                    "externalReferences": {
+                      "connection": "@pipeline().parameters.par_source_container"
+                    },
+                    "annotations": []
+                  }
+                },
+                "sink": {
+                  "type": "BinarySink",
+                  "storeSettings": {
+                    "type": "LakehouseWriteSettings"
+                  },
+                  "datasetSettings": {
+                    "type": "Binary",
+                    "typeProperties": {
+                      "location": {
+                        "type": "LakehouseLocation",
+                        "folderPath": {
+                          "value": "@variables('var_target_folder')",
+                          "type": "Expression"
+                        },
+                        "fileName": {
+                          "value": "@pipeline().parameters.par_target_file",
+                          "type": "Expression"
+                        }
+                      }
+                    },
+                    "linkedService": {
+                      "name": "a9af1d06_6433_4497_b790_19d97061ad27",
+                      "properties": {
+                        "type": "Lakehouse",
+                        "typeProperties": {
+                          "artifactId": "@pipeline().parameters.par_target_container",
+                          "workspaceId": "@pipeline().parameters.par_workspaceid",
+                          "rootFolder": "Files"
+                        },
+                        "annotations": []
+                      }
+                    },
+                    "annotations": []
+                  }
+                },
+                "enableStaging": false
+              },
+              "policy": {
+                "timeout": "0.12:00:00",
+                "retry": 0,
+                "retryIntervalInSeconds": 30,
+                "secureInput": false,
+                "secureOutput": false
+              },
+              "name": "Copy Binary to LH",
+              "dependsOn": []
+            },
+            {
+              "type": "SqlServerStoredProcedure",
+              "typeProperties": {
+                "storedProcedureName": "[cfg].[usp_put_integration_lineage]",
+                "storedProcedureParameters": {
+                  "global_run_id": {
+                    "value": {
+                      "value": "@pipeline().parameters.par_global_run_id",
+                      "type": "Expression"
+                    },
+                    "type": "String"
+                  },
+                  "log": {
+                    "value": {
+                      "value": "@variables('var_log')",
+                      "type": "Expression"
+                    },
+                    "type": "String"
+                  },
+                  "process_step": {
+                    "value": {
+                      "value": "@pipeline().parameters.par_process_step",
+                      "type": "Expression"
+                    },
+                    "type": "String"
+                  },
+                  "entity": {
+                    "value": {
+                      "value": "@pipeline().parameters.par_entity",
+                      "type": "Expression"
+                    },
+                    "type": "String"
+                  },
+                  "run_id": {
+                    "value": {
+                      "value": "@pipeline().parameters.par_global_run_id",
+                      "type": "Expression"
+                    },
+                    "type": "String"
+                  },
+                  "sys_end_time": {
+                    "value": {
+                      "value": "@variables('var_end_time')",
+                      "type": "Expression"
+                    },
+                    "type": "DateTime"
+                  },
+                  "sys_start_time": {
+                    "value": {
+                      "value": "@variables('var_start_time')",
+                      "type": "Expression"
+                    },
+                    "type": "DateTime"
+                  }
+                }
+              },
+              "connectionSettings": {
+                "name": "dbControl",
+                "properties": {
+                  "type": "FabricSqlDatabase",
+                  "typeProperties": {
+                    "artifactId": "72fb3a2c-0568-ae16-4a80-4edcd92c58ea",
+                    "workspaceId": "00000000-0000-0000-0000-000000000000"
+                  },
+                  "externalReferences": {
+                    "connection": "d5658a97-bffd-460a-9802-eac1477d6c1c"
+                  },
+                  "annotations": []
+                }
+              },
+              "policy": {
+                "timeout": "0.12:00:00",
+                "retry": 0,
+                "retryIntervalInSeconds": 30,
+                "secureInput": false,
+                "secureOutput": false
+              },
+              "name": "sp Log",
+              "dependsOn": [
+                {
+                  "activity": "Set log",
+                  "dependencyConditions": [
+                    "Succeeded"
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "SetVariable",
+              "typeProperties": {
+                "variableName": "var_end_time",
+                "value": {
+                  "value": "@formatDateTime(convertfromutc(utcNow(),pipeline().parameters.par_datetime_region),'yyyy-MM-ddThh:mm:ss')",
+                  "type": "Expression"
+                }
+              },
+              "policy": {
+                "secureInput": false,
+                "secureOutput": false
+              },
+              "name": "set end Process",
+              "dependsOn": [
+                {
+                  "activity": "Copy Binary to LH",
+                  "dependencyConditions": [
+                    "Succeeded"
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "SetVariable",
+              "typeProperties": {
+                "variableName": "var_log",
+                "value": {
+                  "value": "@replace(replace(replace(replace(replace(replace(variables('var_initial_log'),'<source_folder>',pipeline().parameters.par_source_folder),'<destination_folder>',variables('var_target_folder')),'<filename>',pipeline().parameters.par_source_file),'<file_type>',pipeline().parameters.par_file_type),'<source_container>',pipeline().parameters.par_source_container),'<destination_container>',pipeline().parameters.par_target_container)",
+                  "type": "Expression"
+                }
+              },
+              "policy": {
+                "secureInput": false,
+                "secureOutput": false
+              },
+              "name": "Set log",
+              "dependsOn": [
+                {
+                  "activity": "set end Process",
+                  "dependencyConditions": [
+                    "Succeeded"
+                  ]
+                }
+              ]
+            }
+          ],
+          "ifFalseActivities": []
+        },
+        "name": "If Condition1",
+        "dependsOn": [
+          {
+            "activity": "Set Folder",
+            "dependencyConditions": [
+              "Succeeded"
+            ]
+          },
+          {
+            "activity": "Set var_lastmodifiedfile",
+            "dependencyConditions": [
+              "Succeeded"
+            ]
+          }
+        ]
+      }
+    ],
+    "parameters": {
+      "par_source_folder": {
+        "type": "String",
+        "defaultValue": "Sources"
+      },
+      "par_source_file": {
+        "type": "String"
+      },
+      "par_target_folder": {
+        "type": "String",
+        "defaultValue": "landing"
+      },
+      "par_target_file": {
+        "type": "String"
+      },
+      "par_global_run_id": {
+        "type": "string"
+      },
+      "par_entity": {
+        "type": "string"
+      },
+      "par_lastdate_process": {
+        "type": "string"
+      },
+      "par_datetime_region": {
+        "type": "string"
+      },
+      "par_file_type": {
+        "type": "string"
+      },
+      "par_process_step": {
+        "type": "string"
+      },
+      "par_target_container": {
+        "type": "string"
+      },
+      "par_source_container": {
+        "type": "string"
+      },
+      "par_workspaceid": {
+        "type": "string"
+      }
+    },
+    "variables": {
+      "var_entities": {
+        "type": "Array"
+      },
+      "var_start_time": {
+        "type": "String"
+      },
+      "var_target_folder": {
+        "type": "String"
+      },
+      "var_lastmodifiedfile": {
+        "type": "String"
+      },
+      "var_end_time": {
+        "type": "String"
+      },
+      "var_log": {
+        "type": "String",
+        "defaultValue": "{      \t\"source_container\" : \"<source_container>\",  \t\"source_folder\" : \"<source_folder>\", \t \t\"destination_container\" : \"<destination_container>\",      \t\"destination_folder\" : \"<destination_folder>\", \t \t\"filename\" : \"<filename>\", \"file_type\" : \"<file_type>\"  }"
+      },
+      "var_initial_log": {
+        "type": "String",
+        "defaultValue": "{      \t\"source_container\" : \"<source_container>\",  \t\"source_folder\" : \"<source_folder>\", \t \t\"destination_container\" : \"<destination_container>\",      \t\"destination_folder\" : \"<destination_folder>\", \t \t\"filename\" : \"<filename>\", \"file_type\" : \"<file_type>\"  }"
+      }
+    }
+  }
+}

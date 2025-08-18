@@ -1,0 +1,27 @@
+table 'Time Itelligence Group'
+	lineageTag: 7e8514fc-3ae9-4d4b-89be-a699676dc111
+
+	calculationGroup
+
+		calculationItem 'Current Month' = CALCULATE(SELECTEDMEASURE(),DATESBETWEEN('Calendar'[Date],[Month From],[Date to]))
+
+		calculationItem 'Current Year' = CALCULATE(SELECTEDMEASURE(),DATESBETWEEN('Calendar'[Date],[Year From],[Date to]))
+
+	column 'Calculation group column'
+		dataType: string
+		lineageTag: 89b9acfe-85e9-45c1-b03b-74c54757fadf
+		summarizeBy: none
+		sourceColumn: Name
+		sortByColumn: Ordinal
+
+		annotation SummarizationSetBy = Automatic
+
+	column Ordinal
+		dataType: int64
+		formatString: 0
+		lineageTag: 340603b7-7706-4f32-bbd7-5487180a1fa5
+		summarizeBy: sum
+		sourceColumn: Ordinal
+
+		annotation SummarizationSetBy = Automatic
+

@@ -1,0 +1,100 @@
+{
+  "config": "{\"version\":\"5.59\",\"themeCollection\":{\"baseTheme\":{\"name\":\"CY24SU10\",\"type\":2,\"version\":\"5.59\"}},\"activeSectionIndex\":0,\"defaultDrillFilterOtherVisuals\":true,\"settings\":{\"useNewFilterPaneExperience\":true,\"allowChangeFilterTypes\":true,\"useStylableVisualContainerHeader\":true,\"queryLimitOption\":6,\"exportDataMode\":1,\"useDefaultAggregateDisplayName\":true},\"objects\":{\"section\":[{\"properties\":{\"verticalAlignment\":{\"expr\":{\"Literal\":{\"Value\":\"'Top'\"}}}}}],\"outspacePane\":[{\"properties\":{\"expanded\":{\"expr\":{\"Literal\":{\"Value\":\"true\"}}}}}]}}",
+  "layoutOptimization": 0,
+  "resourcePackages": [
+    {
+      "resourcePackage": {
+        "disabled": false,
+        "items": [
+          {
+            "name": "CY24SU10",
+            "path": "BaseThemes/CY24SU10.json",
+            "type": 202
+          }
+        ],
+        "name": "SharedResources",
+        "type": 2
+      }
+    },
+    {
+      "resourcePackage": {
+        "items": [
+          {
+            "name": "fondo17831039626169507.png",
+            "path": "fondo17831039626169507.png",
+            "type": 100
+          }
+        ],
+        "name": "RegisteredResources",
+        "type": 1
+      }
+    }
+  ],
+  "sections": [
+    {
+      "config": "{\"relationships\":[{\"source\":\"525e95376bc08a004e06\",\"target\":\"21f753f05002d5b57a55\",\"type\":1},{\"source\":\"525e95376bc08a004e06\",\"target\":\"b1fb928f823b00826883\",\"type\":1},{\"source\":\"b1fb928f823b00826883\",\"target\":\"525e95376bc08a004e06\",\"type\":1},{\"source\":\"b1fb928f823b00826883\",\"target\":\"21f753f05002d5b57a55\",\"type\":1},{\"source\":\"21f753f05002d5b57a55\",\"target\":\"b1fb928f823b00826883\",\"type\":1},{\"source\":\"21f753f05002d5b57a55\",\"target\":\"525e95376bc08a004e06\",\"type\":1}],\"objects\":{\"background\":[{\"properties\":{\"image\":{\"image\":{\"name\":{\"expr\":{\"Literal\":{\"Value\":\"'fondo1.png'\"}}},\"url\":{\"expr\":{\"ResourcePackageItem\":{\"PackageName\":\"RegisteredResources\",\"PackageType\":1,\"ItemName\":\"fondo17831039626169507.png\"}}},\"scaling\":{\"expr\":{\"Literal\":{\"Value\":\"'Normal'\"}}}}},\"transparency\":{\"expr\":{\"Literal\":{\"Value\":\"0D\"}}}}}]}}",
+      "displayName": "Page 1",
+      "displayOption": 1,
+      "filters": "[]",
+      "height": 720.00,
+      "name": "8086e51078cde088068b",
+      "visualContainers": [
+        {
+          "config": "{\"name\":\"077b5497dea03056bb1b\",\"layouts\":[{\"id\":0,\"position\":{\"x\":11.671732522796352,\"y\":108.93617021276596,\"z\":1,\"width\":239.27051671732525,\"height\":77.81155015197568}}],\"singleVisual\":{\"visualType\":\"slicer\",\"projections\":{\"Values\":[{\"queryRef\":\"Time Intelligence.MonthYear\",\"active\":true}]},\"prototypeQuery\":{\"Version\":2,\"From\":[{\"Name\":\"t\",\"Entity\":\"Time Intelligence\",\"Type\":0}],\"Select\":[{\"Column\":{\"Expression\":{\"SourceRef\":{\"Source\":\"t\"}},\"Property\":\"MonthYear\"},\"Name\":\"Time Intelligence.MonthYear\",\"NativeReferenceName\":\"MonthYear\"}],\"OrderBy\":[{\"Direction\":2,\"Expression\":{\"Column\":{\"Expression\":{\"SourceRef\":{\"Source\":\"t\"}},\"Property\":\"MonthYear\"}}}]},\"drillFilterOtherVisuals\":true,\"objects\":{\"data\":[{\"properties\":{\"mode\":{\"expr\":{\"Literal\":{\"Value\":\"'Dropdown'\"}}}}}],\"general\":[{\"properties\":{\"filter\":{\"filter\":{\"Version\":2,\"From\":[{\"Name\":\"t\",\"Entity\":\"Time Intelligence\",\"Type\":0}],\"Where\":[{\"Condition\":{\"In\":{\"Expressions\":[{\"Column\":{\"Expression\":{\"SourceRef\":{\"Source\":\"t\"}},\"Property\":\"MonthYear\"}}],\"Values\":[[{\"Literal\":{\"Value\":\"'May 25'\"}}]]}}}]}}}}]},\"vcObjects\":{\"background\":[{\"properties\":{\"show\":{\"expr\":{\"Literal\":{\"Value\":\"false\"}}}}}]}}}",
+          "filters": "[]",
+          "height": 77.81,
+          "width": 239.27,
+          "x": 11.67,
+          "y": 108.94,
+          "z": 1.00
+        },
+        {
+          "config": "{\"name\":\"08ff6bbb9e5808c3c983\",\"layouts\":[{\"id\":0,\"position\":{\"x\":11.671732522796352,\"y\":203.28267477203647,\"z\":4,\"width\":239.27051671732525,\"height\":77.81155015197568}}],\"singleVisual\":{\"visualType\":\"slicer\",\"projections\":{\"Values\":[{\"queryRef\":\"Shift.Name\",\"active\":true}]},\"prototypeQuery\":{\"Version\":2,\"From\":[{\"Name\":\"s\",\"Entity\":\"Shift\",\"Type\":0}],\"Select\":[{\"Column\":{\"Expression\":{\"SourceRef\":{\"Source\":\"s\"}},\"Property\":\"Name\"},\"Name\":\"Shift.Name\",\"NativeReferenceName\":\"Shift\"}]},\"columnProperties\":{\"Shift.Name\":{\"displayName\":\"Shift\"}},\"drillFilterOtherVisuals\":true,\"objects\":{\"data\":[{\"properties\":{\"mode\":{\"expr\":{\"Literal\":{\"Value\":\"'Dropdown'\"}}}}}],\"general\":[{\"properties\":{}}]},\"vcObjects\":{\"background\":[{\"properties\":{\"show\":{\"expr\":{\"Literal\":{\"Value\":\"false\"}}}}}]}}}",
+          "filters": "[]",
+          "height": 77.81,
+          "width": 239.27,
+          "x": 11.67,
+          "y": 203.28,
+          "z": 4.00
+        },
+        {
+          "config": "{\"name\":\"21f753f05002d5b57a55\",\"layouts\":[{\"id\":0,\"position\":{\"x\":11.990632318501172,\"y\":316.75253708040594,\"z\":0,\"width\":805.3708040593286,\"height\":373.7080405932865}}],\"singleVisual\":{\"visualType\":\"columnChart\",\"projections\":{\"Category\":[{\"queryRef\":\"Calendar.MonthYear\",\"active\":true}],\"Y\":[{\"queryRef\":\"headcount.Employees\"}],\"Series\":[{\"queryRef\":\"Department.GroupName\"}]},\"prototypeQuery\":{\"Version\":2,\"From\":[{\"Name\":\"c\",\"Entity\":\"Calendar\",\"Type\":0},{\"Name\":\"h\",\"Entity\":\"headcount\",\"Type\":0},{\"Name\":\"d\",\"Entity\":\"Department\",\"Type\":0}],\"Select\":[{\"Column\":{\"Expression\":{\"SourceRef\":{\"Source\":\"c\"}},\"Property\":\"MonthYear\"},\"Name\":\"Calendar.MonthYear\",\"NativeReferenceName\":\"MonthYear\"},{\"Measure\":{\"Expression\":{\"SourceRef\":{\"Source\":\"h\"}},\"Property\":\"Employees\"},\"Name\":\"headcount.Employees\",\"NativeReferenceName\":\"Employees\"},{\"Column\":{\"Expression\":{\"SourceRef\":{\"Source\":\"d\"}},\"Property\":\"GroupName\"},\"Name\":\"Department.GroupName\",\"NativeReferenceName\":\"GroupName\"}],\"OrderBy\":[{\"Direction\":1,\"Expression\":{\"Column\":{\"Expression\":{\"SourceRef\":{\"Source\":\"c\"}},\"Property\":\"MonthYear\"}}}]},\"drillFilterOtherVisuals\":true,\"objects\":{\"legend\":[{\"properties\":{\"position\":{\"expr\":{\"Literal\":{\"Value\":\"'RightCenter'\"}}}}}]},\"vcObjects\":{\"background\":[{\"properties\":{\"show\":{\"expr\":{\"Literal\":{\"Value\":\"false\"}}}}}],\"title\":[{\"properties\":{\"text\":{\"expr\":{\"Literal\":{\"Value\":\"'Employees by Montn and Department Group (One Year)'\"}}}}}]}}}",
+          "filters": "[{\"name\":\"38e72710544a50336e7c\",\"expression\":{\"Column\":{\"Expression\":{\"SourceRef\":{\"Entity\":\"Time Itelligence Group\"}},\"Property\":\"Calculation group column\"}},\"filter\":{\"Version\":2,\"From\":[{\"Name\":\"t\",\"Entity\":\"Time Itelligence Group\",\"Type\":0}],\"Where\":[{\"Condition\":{\"In\":{\"Expressions\":[{\"Column\":{\"Expression\":{\"SourceRef\":{\"Source\":\"t\"}},\"Property\":\"Calculation group column\"}}],\"Values\":[[{\"Literal\":{\"Value\":\"'Current Year'\"}}]]}}}]},\"type\":\"Categorical\",\"howCreated\":1,\"objects\":{}}]",
+          "height": 373.71,
+          "width": 805.37,
+          "x": 11.99,
+          "y": 316.75,
+          "z": 0.00
+        },
+        {
+          "config": "{\"name\":\"525e95376bc08a004e06\",\"layouts\":[{\"id\":0,\"position\":{\"x\":280.1970443349754,\"y\":31.921182266009854,\"z\":3,\"width\":478.8177339901478,\"height\":265.1231527093596,\"tabOrder\":2}}],\"singleVisual\":{\"visualType\":\"barChart\",\"projections\":{\"Category\":[{\"queryRef\":\"Shift.Name\",\"active\":true}],\"Y\":[{\"queryRef\":\"headcount.Employees\"}]},\"prototypeQuery\":{\"Version\":2,\"From\":[{\"Name\":\"h\",\"Entity\":\"headcount\",\"Type\":0},{\"Name\":\"s\",\"Entity\":\"Shift\",\"Type\":0}],\"Select\":[{\"Column\":{\"Expression\":{\"SourceRef\":{\"Source\":\"s\"}},\"Property\":\"Name\"},\"Name\":\"Shift.Name\",\"NativeReferenceName\":\"Name\"},{\"Measure\":{\"Expression\":{\"SourceRef\":{\"Source\":\"h\"}},\"Property\":\"Employees\"},\"Name\":\"headcount.Employees\",\"NativeReferenceName\":\"Employees\"}],\"OrderBy\":[{\"Direction\":2,\"Expression\":{\"Measure\":{\"Expression\":{\"SourceRef\":{\"Source\":\"h\"}},\"Property\":\"Employees\"}}}]},\"drillFilterOtherVisuals\":true,\"hasDefaultSort\":true,\"objects\":{\"labels\":[{\"properties\":{\"show\":{\"expr\":{\"Literal\":{\"Value\":\"true\"}}}}}]},\"vcObjects\":{\"background\":[{\"properties\":{\"show\":{\"expr\":{\"Literal\":{\"Value\":\"false\"}}}}}],\"title\":[{\"properties\":{\"text\":{\"expr\":{\"Literal\":{\"Value\":\"'Employees by Shift (current month)'\"}}}}}]}}}",
+          "filters": "[{\"name\":\"142582864921044d8a24\",\"expression\":{\"Column\":{\"Expression\":{\"SourceRef\":{\"Entity\":\"Time Itelligence Group\"}},\"Property\":\"Calculation group column\"}},\"filter\":{\"Version\":2,\"From\":[{\"Name\":\"t\",\"Entity\":\"Time Itelligence Group\",\"Type\":0}],\"Where\":[{\"Condition\":{\"In\":{\"Expressions\":[{\"Column\":{\"Expression\":{\"SourceRef\":{\"Source\":\"t\"}},\"Property\":\"Calculation group column\"}}],\"Values\":[[{\"Literal\":{\"Value\":\"'Current Month'\"}}]]}}}]},\"type\":\"Categorical\",\"howCreated\":1,\"objects\":{}}]",
+          "height": 265.12,
+          "width": 478.82,
+          "x": 280.20,
+          "y": 31.92,
+          "z": 3.00
+        },
+        {
+          "config": "{\"name\":\"b1fb928f823b00826883\",\"layouts\":[{\"id\":0,\"position\":{\"x\":786.8693009118541,\"y\":32.09726443768997,\"z\":2,\"width\":478.5410334346505,\"height\":264.55927051671733,\"tabOrder\":1}}],\"singleVisual\":{\"visualType\":\"pieChart\",\"projections\":{\"Category\":[{\"queryRef\":\"Department.GroupName\",\"active\":true}],\"Y\":[{\"queryRef\":\"headcount.Employees\"}]},\"prototypeQuery\":{\"Version\":2,\"From\":[{\"Name\":\"d\",\"Entity\":\"Department\",\"Type\":0},{\"Name\":\"h\",\"Entity\":\"headcount\",\"Type\":0}],\"Select\":[{\"Column\":{\"Expression\":{\"SourceRef\":{\"Source\":\"d\"}},\"Property\":\"GroupName\"},\"Name\":\"Department.GroupName\",\"NativeReferenceName\":\"GroupName\"},{\"Measure\":{\"Expression\":{\"SourceRef\":{\"Source\":\"h\"}},\"Property\":\"Employees\"},\"Name\":\"headcount.Employees\",\"NativeReferenceName\":\"Employees\"}],\"OrderBy\":[{\"Direction\":2,\"Expression\":{\"Measure\":{\"Expression\":{\"SourceRef\":{\"Source\":\"h\"}},\"Property\":\"Employees\"}}}]},\"drillFilterOtherVisuals\":true,\"hasDefaultSort\":true,\"vcObjects\":{\"background\":[{\"properties\":{\"show\":{\"expr\":{\"Literal\":{\"Value\":\"false\"}}}}}],\"title\":[{\"properties\":{\"text\":{\"expr\":{\"Literal\":{\"Value\":\"'Employees by Department Group (Current Month)'\"}}}}}]}}}",
+          "filters": "[{\"name\":\"142582864921044d8a24\",\"expression\":{\"Column\":{\"Expression\":{\"SourceRef\":{\"Entity\":\"Time Itelligence Group\"}},\"Property\":\"Calculation group column\"}},\"filter\":{\"Version\":2,\"From\":[{\"Name\":\"t\",\"Entity\":\"Time Itelligence Group\",\"Type\":0}],\"Where\":[{\"Condition\":{\"In\":{\"Expressions\":[{\"Column\":{\"Expression\":{\"SourceRef\":{\"Source\":\"t\"}},\"Property\":\"Calculation group column\"}}],\"Values\":[[{\"Literal\":{\"Value\":\"'Current Month'\"}}]]}}}]},\"type\":\"Categorical\",\"howCreated\":1,\"objects\":{}}]",
+          "height": 264.56,
+          "width": 478.54,
+          "x": 786.87,
+          "y": 32.10,
+          "z": 2.00
+        },
+        {
+          "config": "{\"name\":\"f407ca3b7958db0947b0\",\"layouts\":[{\"id\":0,\"position\":{\"x\":855.3317720530836,\"y\":316.75253708040594,\"z\":5,\"width\":410.6791569086651,\"height\":389.6955503512881,\"tabOrder\":3}}],\"singleVisual\":{\"visualType\":\"tableEx\",\"projections\":{\"Values\":[{\"queryRef\":\"Calendar.MonthYear\"},{\"queryRef\":\"Department.GroupName\"},{\"queryRef\":\"headcount.Employees\"}]},\"prototypeQuery\":{\"Version\":2,\"From\":[{\"Name\":\"c\",\"Entity\":\"Calendar\",\"Type\":0},{\"Name\":\"d\",\"Entity\":\"Department\",\"Type\":0},{\"Name\":\"h\",\"Entity\":\"headcount\",\"Type\":0}],\"Select\":[{\"Column\":{\"Expression\":{\"SourceRef\":{\"Source\":\"d\"}},\"Property\":\"GroupName\"},\"Name\":\"Department.GroupName\",\"NativeReferenceName\":\"Department Group\"},{\"Column\":{\"Expression\":{\"SourceRef\":{\"Source\":\"c\"}},\"Property\":\"MonthYear\"},\"Name\":\"Calendar.MonthYear\",\"NativeReferenceName\":\"MonthYear\"},{\"Measure\":{\"Expression\":{\"SourceRef\":{\"Source\":\"h\"}},\"Property\":\"Employees\"},\"Name\":\"headcount.Employees\",\"NativeReferenceName\":\"Employees\"}],\"OrderBy\":[{\"Direction\":1,\"Expression\":{\"Column\":{\"Expression\":{\"SourceRef\":{\"Source\":\"c\"}},\"Property\":\"MonthYear\"}}}]},\"columnProperties\":{\"Department.GroupName\":{\"displayName\":\"Department Group\"}},\"drillFilterOtherVisuals\":true,\"objects\":{\"total\":[{\"properties\":{\"totals\":{\"expr\":{\"Literal\":{\"Value\":\"false\"}}}}}]},\"vcObjects\":{\"background\":[{\"properties\":{\"show\":{\"expr\":{\"Literal\":{\"Value\":\"false\"}}}}}],\"stylePreset\":[{\"properties\":{\"name\":{\"expr\":{\"Literal\":{\"Value\":\"'BoldHeaderFlashyRows'\"}}}}}]}}}",
+          "filters": "[{\"name\":\"dd831280d00d0503aa20\",\"expression\":{\"Column\":{\"Expression\":{\"SourceRef\":{\"Entity\":\"Time Itelligence Group\"}},\"Property\":\"Calculation group column\"}},\"filter\":{\"Version\":2,\"From\":[{\"Name\":\"t\",\"Entity\":\"Time Itelligence Group\",\"Type\":0}],\"Where\":[{\"Condition\":{\"In\":{\"Expressions\":[{\"Column\":{\"Expression\":{\"SourceRef\":{\"Source\":\"t\"}},\"Property\":\"Calculation group column\"}}],\"Values\":[[{\"Literal\":{\"Value\":\"'Current Year'\"}}]]}}}]},\"type\":\"Categorical\",\"howCreated\":1,\"objects\":{}}]",
+          "height": 389.70,
+          "width": 410.68,
+          "x": 855.33,
+          "y": 316.75,
+          "z": 5.00
+        }
+      ],
+      "width": 1280.00
+    }
+  ]
+}

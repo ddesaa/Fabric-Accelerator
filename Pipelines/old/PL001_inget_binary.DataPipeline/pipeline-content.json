@@ -1,0 +1,306 @@
+{
+  "properties": {
+    "activities": [
+      {
+        "type": "SetVariable",
+        "typeProperties": {
+          "variableName": "var_start_time",
+          "value": {
+            "value": "@formatDateTime(convertTimeZone(utcNow(), 'UTC', 'Argentina Standard Time'),'yyyy-MM-ddThh:mm:ss')\n",
+            "type": "Expression"
+          }
+        },
+        "policy": {
+          "secureInput": false,
+          "secureOutput": false
+        },
+        "name": "Set start time",
+        "dependsOn": []
+      },
+      {
+        "type": "SetVariable",
+        "typeProperties": {
+          "variableName": "var_target_folder",
+          "value": {
+            "value": "@concat(pipeline().parameters.par_target_folder,formatDateTime(convertTimeZone(utcNow(), 'UTC', 'Argentina Standard Time'),'/yyyy/MM/dd/HHmm'))",
+            "type": "Expression"
+          }
+        },
+        "policy": {
+          "secureInput": false,
+          "secureOutput": false
+        },
+        "name": "Set Folder",
+        "dependsOn": [
+          {
+            "activity": "Set start time",
+            "dependencyConditions": [
+              "Succeeded"
+            ]
+          }
+        ]
+      },
+      {
+        "type": "GetMetadata",
+        "typeProperties": {
+          "datasetSettings": {
+            "type": "Binary",
+            "typeProperties": {
+              "location": {
+                "type": "AzureFileStorageLocation",
+                "folderPath": {
+                  "value": "@pipeline().parameters.par_source_folder",
+                  "type": "Expression"
+                },
+                "fileName": {
+                  "value": "@pipeline().parameters.par_source_file",
+                  "type": "Expression"
+                }
+              }
+            },
+            "externalReferences": {
+              "connection": "0756c55f-6b84-4ab6-bf21-991289ee923c"
+            },
+            "annotations": []
+          },
+          "fieldList": [
+            "lastModified"
+          ],
+          "storeSettings": {
+            "type": "AzureFileStorageReadSettings",
+            "recursive": true,
+            "enablePartitionDiscovery": false
+          },
+          "formatSettings": {
+            "type": "BinaryReadSettings"
+          }
+        },
+        "policy": {
+          "timeout": "0.12:00:00",
+          "retry": 0,
+          "retryIntervalInSeconds": 30,
+          "secureInput": false,
+          "secureOutput": false
+        },
+        "name": "Get LastModified",
+        "dependsOn": [
+          {
+            "activity": "Set start time",
+            "dependencyConditions": [
+              "Succeeded"
+            ]
+          }
+        ]
+      },
+      {
+        "type": "SetVariable",
+        "typeProperties": {
+          "variableName": "var_lastmodifiedfile",
+          "value": {
+            "value": "@formatDateTime(activity('Get LastModified').output.lastModified,'yyyy-MM-ddThh:mm')",
+            "type": "Expression"
+          }
+        },
+        "policy": {
+          "secureInput": false,
+          "secureOutput": false
+        },
+        "name": "Set var_lastmodifiedfile",
+        "dependsOn": [
+          {
+            "activity": "Get LastModified",
+            "dependencyConditions": [
+              "Succeeded"
+            ]
+          }
+        ]
+      },
+      {
+        "type": "IfCondition",
+        "typeProperties": {
+          "expression": {
+            "value": "@greater(variables('var_lastmodifiedfile'),pipeline().parameters.par_lastdate_process)",
+            "type": "Expression"
+          },
+          "ifTrueActivities": [
+            {
+              "type": "Copy",
+              "typeProperties": {
+                "source": {
+                  "type": "BinarySource",
+                  "formatSettings": {
+                    "type": "BinaryReadSettings"
+                  },
+                  "storeSettings": {
+                    "type": "AzureFileStorageReadSettings",
+                    "recursive": false
+                  },
+                  "datasetSettings": {
+                    "type": "Binary",
+                    "typeProperties": {
+                      "location": {
+                        "type": "AzureFileStorageLocation",
+                        "folderPath": {
+                          "value": "@pipeline().parameters.par_source_folder",
+                          "type": "Expression"
+                        },
+                        "fileName": {
+                          "value": "@pipeline().parameters.par_source_file",
+                          "type": "Expression"
+                        }
+                      }
+                    },
+                    "externalReferences": {
+                      "connection": "0756c55f-6b84-4ab6-bf21-991289ee923c"
+                    },
+                    "annotations": []
+                  }
+                },
+                "sink": {
+                  "type": "BinarySink",
+                  "storeSettings": {
+                    "type": "LakehouseWriteSettings",
+                    "copyBehavior": "PreserveHierarchy"
+                  },
+                  "datasetSettings": {
+                    "type": "Binary",
+                    "typeProperties": {
+                      "location": {
+                        "type": "LakehouseLocation",
+                        "folderPath": {
+                          "value": "@variables('var_target_folder')",
+                          "type": "Expression"
+                        },
+                        "fileName": {
+                          "value": "@pipeline().parameters.par_target_file",
+                          "type": "Expression"
+                        }
+                      }
+                    },
+                    "linkedService": {
+                      "name": "ADW2022LH",
+                      "properties": {
+                        "type": "Lakehouse",
+                        "typeProperties": {
+                          "artifactId": "ebc4c529-823c-8194-4fdc-5139f30f22e4",
+                          "workspaceId": "00000000-0000-0000-0000-000000000000",
+                          "rootFolder": "Files"
+                        },
+                        "annotations": []
+                      }
+                    },
+                    "annotations": []
+                  }
+                },
+                "enableStaging": false
+              },
+              "policy": {
+                "timeout": "0.12:00:00",
+                "retry": 0,
+                "retryIntervalInSeconds": 30,
+                "secureInput": false,
+                "secureOutput": false
+              },
+              "name": "Copy Binary to LH",
+              "dependsOn": []
+            },
+            {
+              "type": "TridentNotebook",
+              "typeProperties": {
+                "notebookId": "1e775a77-d5ec-9837-4a3b-4cc9cc1c5277",
+                "workspaceId": "00000000-0000-0000-0000-000000000000",
+                "parameters": {
+                  "run_id": {
+                    "value": {
+                      "value": "@pipeline().parameters.par_global_run_id",
+                      "type": "Expression"
+                    },
+                    "type": "string"
+                  },
+                  "ingest_path": {
+                    "value": {
+                      "value": "@concat(concat(variables('var_target_folder'),'/'),pipeline().parameters.par_target_file)",
+                      "type": "Expression"
+                    },
+                    "type": "string"
+                  }
+                }
+              },
+              "policy": {
+                "timeout": "0.12:00:00",
+                "retry": 3,
+                "retryIntervalInSeconds": 30,
+                "secureInput": false,
+                "secureOutput": false
+              },
+              "name": "Ingest lineage",
+              "dependsOn": [
+                {
+                  "activity": "Copy Binary to LH",
+                  "dependencyConditions": [
+                    "Succeeded"
+                  ]
+                }
+              ]
+            }
+          ],
+          "ifFalseActivities": []
+        },
+        "name": "If Condition1",
+        "dependsOn": [
+          {
+            "activity": "Set Folder",
+            "dependencyConditions": [
+              "Succeeded"
+            ]
+          },
+          {
+            "activity": "Set var_lastmodifiedfile",
+            "dependencyConditions": [
+              "Succeeded"
+            ]
+          }
+        ]
+      }
+    ],
+    "parameters": {
+      "par_source_folder": {
+        "type": "String",
+        "defaultValue": "Sources"
+      },
+      "par_source_file": {
+        "type": "String"
+      },
+      "par_target_folder": {
+        "type": "String",
+        "defaultValue": "landing"
+      },
+      "par_target_file": {
+        "type": "String"
+      },
+      "par_global_run_id": {
+        "type": "string"
+      },
+      "par_entity": {
+        "type": "string"
+      },
+      "par_lastdate_process": {
+        "type": "string"
+      }
+    },
+    "variables": {
+      "var_entities": {
+        "type": "Array"
+      },
+      "var_start_time": {
+        "type": "String"
+      },
+      "var_target_folder": {
+        "type": "String"
+      },
+      "var_lastmodifiedfile": {
+        "type": "String"
+      }
+    }
+  }
+}

@@ -1,0 +1,170 @@
+{
+  "properties": {
+    "activities": [
+      {
+        "type": "GetMetadata",
+        "typeProperties": {
+          "datasetSettings": {
+            "type": "Binary",
+            "typeProperties": {
+              "location": {
+                "type": "AzureFileStorageLocation",
+                "folderPath": {
+                  "value": "@pipeline().parameters.par_source_folder",
+                  "type": "Expression"
+                }
+              }
+            },
+            "externalReferences": {
+              "connection": "0756c55f-6b84-4ab6-bf21-991289ee923c"
+            },
+            "annotations": []
+          },
+          "fieldList": [
+            "childItems",
+            "itemName",
+            "lastModified",
+            "itemType"
+          ],
+          "storeSettings": {
+            "type": "AzureFileStorageReadSettings",
+            "recursive": true,
+            "enablePartitionDiscovery": false
+          },
+          "formatSettings": {
+            "type": "BinaryReadSettings"
+          }
+        },
+        "policy": {
+          "timeout": "0.12:00:00",
+          "retry": 0,
+          "retryIntervalInSeconds": 30,
+          "secureInput": false,
+          "secureOutput": false
+        },
+        "name": "Get Source Folder",
+        "dependsOn": []
+      },
+      {
+        "type": "ForEach",
+        "typeProperties": {
+          "items": {
+            "value": "@activity('Filter File').output.value",
+            "type": "Expression"
+          },
+          "activities": [
+            {
+              "type": "ExecutePipeline",
+              "typeProperties": {
+                "pipeline": {
+                  "referenceName": "bb179628-e04c-9389-46d6-d82cfbdea23a",
+                  "type": "PipelineReference"
+                },
+                "parameters": {
+                  "par_source_folder": {
+                    "value": "@pipeline().parameters.par_source_folder",
+                    "type": "Expression"
+                  },
+                  "par_source_file": {
+                    "value": "@item().Name",
+                    "type": "Expression"
+                  },
+                  "par_target_folder": {
+                    "value": "@pipeline().parameters.par_target_folder",
+                    "type": "Expression"
+                  },
+                  "par_target_file": {
+                    "value": "@item().Name",
+                    "type": "Expression"
+                  },
+                  "par_global_run_id": {
+                    "value": "@pipeline().parameters.par_global_run_id",
+                    "type": "Expression"
+                  },
+                  "par_entity": {
+                    "value": "@pipeline().parameters.par_entity",
+                    "type": "Expression"
+                  },
+                  "par_lastdate_process": {
+                    "value": "@pipeline().parameters.par_lastdate_process",
+                    "type": "Expression"
+                  }
+                },
+                "waitOnCompletion": true
+              },
+              "policy": {
+                "secureInput": false
+              },
+              "name": "Invoke PL001",
+              "dependsOn": []
+            }
+          ]
+        },
+        "name": "ForEach File",
+        "dependsOn": [
+          {
+            "activity": "Filter File",
+            "dependencyConditions": [
+              "Succeeded"
+            ]
+          }
+        ]
+      },
+      {
+        "type": "Filter",
+        "typeProperties": {
+          "items": {
+            "value": "@activity('Get Source Folder').output.childItems",
+            "type": "Expression"
+          },
+          "condition": {
+            "value": "@and(endswith(item().name,pipeline().parameters.par_file_type), startswith(item().name,pipeline().parameters.par_entity))",
+            "type": "Expression"
+          }
+        },
+        "name": "Filter File",
+        "dependsOn": [
+          {
+            "activity": "Get Source Folder",
+            "dependencyConditions": [
+              "Succeeded"
+            ]
+          }
+        ]
+      }
+    ],
+    "parameters": {
+      "par_entity": {
+        "type": "string",
+        "defaultValue": "Employee"
+      },
+      "par_global_run_id": {
+        "type": "string",
+        "defaultValue": "aefa8af5-9c4e-4f20-9185-3bf4ccd8dcd7"
+      },
+      "par_full_process": {
+        "type": "string"
+      },
+      "par_source_folder": {
+        "type": "string"
+      },
+      "par_target_folder": {
+        "type": "string"
+      },
+      "par_file_type": {
+        "type": "string"
+      },
+      "par_lastdate_process": {
+        "type": "string"
+      }
+    },
+    "variables": {
+      "var_entities": {
+        "type": "Array"
+      },
+      "var_json": {
+        "type": "String"
+      }
+    }
+  }
+}

@@ -1,0 +1,206 @@
+{
+  "properties": {
+    "activities": [
+      {
+        "type": "Lookup",
+        "typeProperties": {
+          "source": {
+            "type": "FabricSqlDatabaseSource",
+            "sqlReaderStoredProcedureName": "[cfg].[usp_get_integration_process_by_trigger]",
+            "storedProcedureParameters": {
+              "trigger_name": {
+                "value": {
+                  "value": "@pipeline().parameters.trigger_name",
+                  "type": "Expression"
+                },
+                "type": "String"
+              }
+            },
+            "partitionOption": "None",
+            "queryTimeout": "02:00:00"
+          },
+          "datasetSettings": {
+            "type": "FabricSqlDatabaseTable",
+            "schema": [],
+            "connectionSettings": {
+              "name": "dbControl",
+              "properties": {
+                "type": "FabricSqlDatabase",
+                "typeProperties": {
+                  "artifactId": "72fb3a2c-0568-ae16-4a80-4edcd92c58ea",
+                  "workspaceId": "00000000-0000-0000-0000-000000000000"
+                },
+                "externalReferences": {
+                  "connection": "d5658a97-bffd-460a-9802-eac1477d6c1c"
+                },
+                "annotations": []
+              }
+            },
+            "annotations": []
+          },
+          "firstRowOnly": false
+        },
+        "policy": {
+          "timeout": "0.12:00:00",
+          "retry": 0,
+          "retryIntervalInSeconds": 30,
+          "secureInput": false,
+          "secureOutput": false
+        },
+        "name": "lkProcesses",
+        "dependsOn": [
+          {
+            "activity": "sp Log",
+            "dependencyConditions": [
+              "Succeeded"
+            ]
+          }
+        ]
+      },
+      {
+        "type": "ForEach",
+        "typeProperties": {
+          "isSequential": true,
+          "items": {
+            "value": "@activity('lkProcesses').output.value",
+            "type": "Expression"
+          },
+          "activities": [
+            {
+              "type": "ExecutePipeline",
+              "typeProperties": {
+                "pipeline": {
+                  "referenceName": "401963df-3943-bb90-4419-d1cd34f7d7be",
+                  "type": "PipelineReference"
+                },
+                "parameters": {
+                  "full_process": {
+                    "value": "@pipeline().parameters.full_process",
+                    "type": "Expression"
+                  },
+                  "integration_key": {
+                    "value": "@item().integration_process_key",
+                    "type": "Expression"
+                  },
+                  "global_run_id": {
+                    "value": "@pipeline().RunId",
+                    "type": "Expression"
+                  },
+                  "process_step": {
+                    "value": "@item().process_step",
+                    "type": "Expression"
+                  }
+                },
+                "waitOnCompletion": true
+              },
+              "policy": {
+                "secureInput": false
+              },
+              "name": "Exec DP 800",
+              "dependsOn": []
+            }
+          ]
+        },
+        "name": "ForEach Process",
+        "dependsOn": [
+          {
+            "activity": "lkProcesses",
+            "dependencyConditions": [
+              "Succeeded"
+            ]
+          }
+        ]
+      },
+      {
+        "type": "Teams",
+        "typeProperties": {
+          "inputs": {
+            "body": {
+              "recipient": {
+                "groupId": "3db4d270-52c2-4e26-b6da-d57ac765560b",
+                "channelId": "19:4cdcf50626564e869344b4e85dea4f22@thread.skype"
+              },
+              "messageBody": "<p>Esto es una prueba de implementacion de Fabric con Teams como notificador de procesos&nbsp;</p>\n<p><br></p>\n<p>Pipeline Run ID @{pipeline().RunId}</p>\n<p>Trigger Name: @{pipeline().parameters.trigger_name}</p>\n<p>Process Full: @{pipeline().parameters.full_process}&nbsp;</p>",
+              "subject": "Fabric Accelerator Test"
+            },
+            "method": "post",
+            "path": "/beta/teams/conversation/message/poster/User/location/Channel"
+          }
+        },
+        "name": "Notif Fin 900",
+        "state": "Inactive",
+        "onInactiveMarkAs": "Succeeded",
+        "dependsOn": [
+          {
+            "activity": "ForEach Process",
+            "dependencyConditions": [
+              "Succeeded"
+            ]
+          }
+        ]
+      },
+      {
+        "type": "SqlServerStoredProcedure",
+        "typeProperties": {
+          "storedProcedureName": "[cfg].[usp_put_global_process]",
+          "storedProcedureParameters": {
+            "Global_Run_ID": {
+              "value": {
+                "value": "@pipeline().RunId",
+                "type": "Expression"
+              },
+              "type": "String"
+            },
+            "is_full_process": {
+              "value": {
+                "value": "@pipeline().parameters.full_process",
+                "type": "Expression"
+              },
+              "type": "String"
+            },
+            "trigger_name": {
+              "value": {
+                "value": "@pipeline().parameters.trigger_name",
+                "type": "Expression"
+              },
+              "type": "String"
+            }
+          }
+        },
+        "connectionSettings": {
+          "name": "dbControl",
+          "properties": {
+            "type": "FabricSqlDatabase",
+            "typeProperties": {
+              "artifactId": "72fb3a2c-0568-ae16-4a80-4edcd92c58ea",
+              "workspaceId": "00000000-0000-0000-0000-000000000000"
+            },
+            "externalReferences": {
+              "connection": "d5658a97-bffd-460a-9802-eac1477d6c1c"
+            },
+            "annotations": []
+          }
+        },
+        "policy": {
+          "timeout": "0.12:00:00",
+          "retry": 0,
+          "retryIntervalInSeconds": 30,
+          "secureInput": false,
+          "secureOutput": false
+        },
+        "name": "sp Log",
+        "dependsOn": []
+      }
+    ],
+    "parameters": {
+      "trigger_name": {
+        "type": "string",
+        "defaultValue": "full_integration"
+      },
+      "full_process": {
+        "type": "string",
+        "defaultValue": "Yes"
+      }
+    }
+  }
+}

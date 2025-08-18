@@ -1,0 +1,200 @@
+{
+  "properties": {
+    "activities": [
+      {
+        "type": "GetMetadata",
+        "typeProperties": {
+          "datasetSettings": {
+            "type": "Binary",
+            "typeProperties": {
+              "location": {
+                "type": "AzureFileStorageLocation",
+                "folderPath": {
+                  "value": "@pipeline().parameters.par_source_folder",
+                  "type": "Expression"
+                }
+              }
+            },
+            "externalReferences": {
+              "connection": "0756c55f-6b84-4ab6-bf21-991289ee923c"
+            },
+            "annotations": []
+          },
+          "fieldList": [
+            "childItems",
+            "itemName",
+            "lastModified",
+            "itemType"
+          ],
+          "storeSettings": {
+            "type": "AzureFileStorageReadSettings",
+            "recursive": true,
+            "enablePartitionDiscovery": false
+          },
+          "formatSettings": {
+            "type": "BinaryReadSettings"
+          }
+        },
+        "policy": {
+          "timeout": "0.12:00:00",
+          "retry": 0,
+          "retryIntervalInSeconds": 30,
+          "secureInput": false,
+          "secureOutput": false
+        },
+        "name": "Get Source Folder",
+        "dependsOn": []
+      },
+      {
+        "type": "ForEach",
+        "typeProperties": {
+          "isSequential": true,
+          "items": {
+            "value": "@activity('Filter File').output.value",
+            "type": "Expression"
+          },
+          "activities": [
+            {
+              "type": "ExecutePipeline",
+              "typeProperties": {
+                "pipeline": {
+                  "referenceName": "5fcd07ef-2fd3-a447-4253-b6b8adec44a1",
+                  "type": "PipelineReference"
+                },
+                "parameters": {
+                  "par_source_folder": {
+                    "value": "@pipeline().parameters.par_source_folder",
+                    "type": "Expression"
+                  },
+                  "par_source_file": {
+                    "value": "@item().Name",
+                    "type": "Expression"
+                  },
+                  "par_target_folder": {
+                    "value": "@pipeline().parameters.par_target_folder",
+                    "type": "Expression"
+                  },
+                  "par_target_file": {
+                    "value": "@item().Name",
+                    "type": "Expression"
+                  },
+                  "par_global_run_id": {
+                    "value": "@pipeline().parameters.par_global_run_id",
+                    "type": "Expression"
+                  },
+                  "par_entity": {
+                    "value": "@pipeline().parameters.par_entity",
+                    "type": "Expression"
+                  },
+                  "par_lastdate_process": {
+                    "value": "@pipeline().parameters.par_lastdate_process",
+                    "type": "Expression"
+                  },
+                  "par_datetime_region": {
+                    "value": "@pipeline().parameters.par_datetime_region",
+                    "type": "Expression"
+                  },
+                  "par_file_type": {
+                    "value": "@pipeline().parameters.par_file_type",
+                    "type": "Expression"
+                  },
+                  "par_process_step": {
+                    "value": "@pipeline().parameters.par_process_step",
+                    "type": "Expression"
+                  },
+                  "par_target_container": {
+                    "value": "@pipeline().parameters.par_target_container",
+                    "type": "Expression"
+                  },
+                  "par_source_container": {
+                    "value": "@pipeline().parameters.par_source_container",
+                    "type": "Expression"
+                  },
+                  "par_workspaceid": {
+                    "value": "@pipeline().parameters.par_workspaceid",
+                    "type": "Expression"
+                  }
+                },
+                "waitOnCompletion": true
+              },
+              "policy": {
+                "secureInput": false
+              },
+              "name": "Invoke Dp001",
+              "dependsOn": []
+            }
+          ]
+        },
+        "name": "ForEach File",
+        "dependsOn": [
+          {
+            "activity": "Filter File",
+            "dependencyConditions": [
+              "Succeeded"
+            ]
+          }
+        ]
+      },
+      {
+        "type": "Filter",
+        "typeProperties": {
+          "items": {
+            "value": "@activity('Get Source Folder').output.childItems",
+            "type": "Expression"
+          },
+          "condition": {
+            "value": "@and(endswith(item().name,pipeline().parameters.par_file_type), startswith(item().name,pipeline().parameters.par_entity))",
+            "type": "Expression"
+          }
+        },
+        "name": "Filter File",
+        "dependsOn": [
+          {
+            "activity": "Get Source Folder",
+            "dependencyConditions": [
+              "Succeeded"
+            ]
+          }
+        ]
+      }
+    ],
+    "parameters": {
+      "par_source_folder": {
+        "type": "string"
+      },
+      "par_file_type": {
+        "type": "string"
+      },
+      "par_entity": {
+        "type": "string"
+      },
+      "Integration_setting": {
+        "type": "string"
+      },
+      "par_target_folder": {
+        "type": "string"
+      },
+      "par_global_run_id": {
+        "type": "string"
+      },
+      "par_lastdate_process": {
+        "type": "string"
+      },
+      "par_datetime_region": {
+        "type": "string"
+      },
+      "par_process_step": {
+        "type": "string"
+      },
+      "par_target_container": {
+        "type": "string"
+      },
+      "par_source_container": {
+        "type": "string"
+      },
+      "par_workspaceid": {
+        "type": "string"
+      }
+    }
+  }
+}

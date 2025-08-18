@@ -1,0 +1,77 @@
+table GlobalProcess_lineage
+	lineageTag: a4988064-0d9e-4af2-8081-2900bbd3b044
+	sourceLineageTag: [cfg].[GlobalProcess_lineage]
+
+	measure 'Process Key' = ```
+			max(GlobalProcess_lineage[GlobalProcess_lineage_key]) 
+			```
+		formatString: 0
+		lineageTag: d7ec3ea1-23e1-48c0-9842-abdfd426076f
+
+		changedProperty = Name
+
+	measure 'Global Run ID Selected' = CALCULATE(LASTNONBLANK(GlobalProcess_lineage[global_run_id],""),FILTER(VALUES(GlobalProcess_lineage[GlobalProcess_lineage_key]),GlobalProcess_lineage[GlobalProcess_lineage_key]=[Process Key]))
+		lineageTag: faafd7fb-a981-4593-91b4-1fc7f959e49d
+
+		changedProperty = Name
+
+	measure 'Full Process Param Selected' = CALCULATE(LASTNONBLANK(GlobalProcess_lineage[Full_Process_Parameter],""),FILTER(VALUES(GlobalProcess_lineage[GlobalProcess_lineage_key]),GlobalProcess_lineage[GlobalProcess_lineage_key]=[Process Key]))
+		lineageTag: ce3281e4-b1fe-4d16-85a4-92f31969a7fc
+
+		changedProperty = Name
+
+	measure 'Trigger Name Param Selected' = CALCULATE(LASTNONBLANK(GlobalProcess_lineage[Trigger_Name_Parameter],""),FILTER(VALUES(GlobalProcess_lineage[GlobalProcess_lineage_key]),GlobalProcess_lineage[GlobalProcess_lineage_key]=[Process Key]))
+		lineageTag: 32ee21e4-c452-4227-ab92-9943f7a0cec0
+
+		changedProperty = Name
+
+	column GlobalProcess_lineage_key
+		dataType: int64
+		formatString: 0
+		lineageTag: dfd233c5-112f-437e-9c4a-b9da1ad97778
+		sourceLineageTag: GlobalProcess_lineage_key
+		summarizeBy: none
+		sourceColumn: GlobalProcess_lineage_key
+
+		changedProperty = IsHidden
+
+		changedProperty = SummarizeBy
+
+		annotation SummarizationSetBy = User
+
+	column global_run_id
+		dataType: string
+		lineageTag: dabc3efa-4194-4e27-b904-a3dd1d843797
+		sourceLineageTag: global_run_id
+		summarizeBy: none
+		sourceColumn: global_run_id
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column Full_Process_Parameter
+		dataType: string
+		lineageTag: 79ca8cd0-8f51-4795-b4d8-99b8269e8d9d
+		sourceLineageTag: Full_Process_Parameter
+		summarizeBy: none
+		sourceColumn: Full_Process_Parameter
+
+		annotation SummarizationSetBy = Automatic
+
+	column Trigger_Name_Parameter
+		dataType: string
+		lineageTag: facbcc76-73c7-4dfa-a81b-30fb25224e2c
+		sourceLineageTag: Trigger_Name_Parameter
+		summarizeBy: none
+		sourceColumn: Trigger_Name_Parameter
+
+		annotation SummarizationSetBy = Automatic
+
+	partition GlobalProcess_lineage = entity
+		mode: directLake
+		source
+			entityName: GlobalProcess_lineage
+			schemaName: cfg
+			expressionSource: 'DirectLake - dbControl'
+

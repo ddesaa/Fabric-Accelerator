@@ -1,0 +1,11 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/gitIntegration/platformProperties/2.0.0/schema.json",
+  "metadata": {
+    "type": "SemanticModel",
+    "displayName": "SM Processes lineage"
+  },
+  "config": {
+    "version": "2.0",
+    "logicalId": "e65a2d7e-2cda-951d-4c18-177b26896d89"
+  }
+}

@@ -1,0 +1,257 @@
+{
+  "properties": {
+    "activities": [
+      {
+        "type": "IfCondition",
+        "typeProperties": {
+          "expression": {
+            "value": "@not(equals(coalesce(pipeline().parameters.par_notebook,''),''))",
+            "type": "Expression"
+          },
+          "ifTrueActivities": [
+            {
+              "type": "TridentNotebook",
+              "typeProperties": {
+                "notebookId": {
+                  "value": "@pipeline().parameters.par_notebook",
+                  "type": "Expression"
+                },
+                "workspaceId": {
+                  "value": "@pipeline().parameters.par_workspace_id",
+                  "type": "Expression"
+                },
+                "parameters": {
+                  "par_process_full": {
+                    "value": {
+                      "value": "@pipeline().parameters.par_full_process",
+                      "type": "Expression"
+                    },
+                    "type": "string"
+                  },
+                  "par_run_ID": {
+                    "value": {
+                      "value": "@pipeline().parameters.par_global_run_id",
+                      "type": "Expression"
+                    },
+                    "type": "string"
+                  }
+                }
+              },
+              "policy": {
+                "timeout": "0.12:00:00",
+                "retry": 0,
+                "retryIntervalInSeconds": 30,
+                "secureInput": false,
+                "secureOutput": false
+              },
+              "name": "exec Notebook",
+              "dependsOn": []
+            },
+            {
+              "type": "SqlServerStoredProcedure",
+              "typeProperties": {
+                "storedProcedureName": "[cfg].[usp_put_integration_lineage]",
+                "storedProcedureParameters": {
+                  "global_run_id": {
+                    "value": {
+                      "value": "@pipeline().parameters.par_global_run_id",
+                      "type": "Expression"
+                    },
+                    "type": "String"
+                  },
+                  "log": {
+                    "value": {
+                      "value": "@variables('var_log')",
+                      "type": "Expression"
+                    },
+                    "type": "String"
+                  },
+                  "process_step": {
+                    "value": {
+                      "value": "@pipeline().parameters.par_step_process",
+                      "type": "Expression"
+                    },
+                    "type": "String"
+                  },
+                  "entity": {
+                    "value": {
+                      "value": "@pipeline().parameters.par_entity",
+                      "type": "Expression"
+                    },
+                    "type": "String"
+                  },
+                  "run_id": {
+                    "value": {
+                      "value": "@pipeline().parameters.par_global_run_id",
+                      "type": "Expression"
+                    },
+                    "type": "String"
+                  },
+                  "sys_end_time": {
+                    "value": {
+                      "value": "@variables('var_end_time')",
+                      "type": "Expression"
+                    },
+                    "type": "DateTime"
+                  },
+                  "sys_start_time": {
+                    "value": {
+                      "value": "@variables('var_start_time')",
+                      "type": "Expression"
+                    },
+                    "type": "DateTime"
+                  }
+                }
+              },
+              "connectionSettings": {
+                "name": "dbControl",
+                "properties": {
+                  "type": "FabricSqlDatabase",
+                  "typeProperties": {
+                    "artifactId": "72fb3a2c-0568-ae16-4a80-4edcd92c58ea",
+                    "workspaceId": "00000000-0000-0000-0000-000000000000"
+                  },
+                  "externalReferences": {
+                    "connection": "d5658a97-bffd-460a-9802-eac1477d6c1c"
+                  },
+                  "annotations": []
+                }
+              },
+              "policy": {
+                "timeout": "0.12:00:00",
+                "retry": 0,
+                "retryIntervalInSeconds": 30,
+                "secureInput": false,
+                "secureOutput": false
+              },
+              "name": "sp Log",
+              "dependsOn": [
+                {
+                  "activity": "Set log",
+                  "dependencyConditions": [
+                    "Succeeded"
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "SetVariable",
+              "typeProperties": {
+                "variableName": "var_end_time",
+                "value": {
+                  "value": "@formatDateTime(convertfromutc(utcNow(),pipeline().parameters.par_datetime_region),'yyyy-MM-ddThh:mm:ss')",
+                  "type": "Expression"
+                }
+              },
+              "policy": {
+                "secureInput": false,
+                "secureOutput": false
+              },
+              "name": "set end Process",
+              "dependsOn": [
+                {
+                  "activity": "exec Notebook",
+                  "dependencyConditions": [
+                    "Succeeded"
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "SetVariable",
+              "typeProperties": {
+                "variableName": "var_log",
+                "value": {
+                  "value": "@replace(replace(variables('var_initial_log'),'<notebook_name>',pipeline().parameters.par_notebook),'<entity>',pipeline().parameters.par_entity)",
+                  "type": "Expression"
+                }
+              },
+              "policy": {
+                "secureInput": false,
+                "secureOutput": false
+              },
+              "name": "Set log",
+              "dependsOn": [
+                {
+                  "activity": "set end Process",
+                  "dependencyConditions": [
+                    "Succeeded"
+                  ]
+                }
+              ]
+            }
+          ],
+          "ifFalseActivities": []
+        },
+        "name": "If Condition1",
+        "dependsOn": [
+          {
+            "activity": "Set start time",
+            "dependencyConditions": [
+              "Succeeded"
+            ]
+          }
+        ]
+      },
+      {
+        "type": "SetVariable",
+        "typeProperties": {
+          "variableName": "var_start_time",
+          "value": {
+            "value": "@formatDateTime(convertTimeZone(utcNow(), 'UTC',pipeline().parameters.par_datetime_region),'yyyy-MM-ddThh:mm:ss')",
+            "type": "Expression"
+          }
+        },
+        "policy": {
+          "secureInput": false,
+          "secureOutput": false
+        },
+        "name": "Set start time",
+        "dependsOn": []
+      }
+    ],
+    "parameters": {
+      "par_global_run_id": {
+        "type": "string",
+        "defaultValue": "9be42777-e55b-4bc4-812e-93c38ba0e675"
+      },
+      "par_entity": {
+        "type": "string",
+        "defaultValue": "Employee"
+      },
+      "par_notebook": {
+        "type": "string",
+        "defaultValue": "c25ea603-6fee-42c6-b9ba-0f0660589ab0"
+      },
+      "par_workspace_id": {
+        "type": "string",
+        "defaultValue": "b8d12831-e5df-4a49-aba5-84e328c00ec0"
+      },
+      "par_full_process": {
+        "type": "string",
+        "defaultValue": "True"
+      },
+      "par_datetime_region": {
+        "type": "string"
+      },
+      "par_step_process": {
+        "type": "string"
+      }
+    },
+    "variables": {
+      "var_start_time": {
+        "type": "String"
+      },
+      "var_end_time": {
+        "type": "String"
+      },
+      "var_initial_log": {
+        "type": "String",
+        "defaultValue": "{     \"entity\": \"<entity>\",     \"notebook_name\": \"<notebook_name>\",     \"filename\": \"<filename>\" }"
+      },
+      "var_log": {
+        "type": "String"
+      }
+    }
+  }
+}

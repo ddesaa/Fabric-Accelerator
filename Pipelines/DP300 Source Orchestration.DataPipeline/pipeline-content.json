@@ -1,0 +1,176 @@
+{
+  "properties": {
+    "activities": [
+      {
+        "type": "Switch",
+        "typeProperties": {
+          "on": {
+            "value": "@pipeline().parameters.par_source",
+            "type": "Expression"
+          },
+          "cases": [
+            {
+              "value": "fileserver",
+              "activities": [
+                {
+                  "type": "ExecutePipeline",
+                  "typeProperties": {
+                    "pipeline": {
+                      "referenceName": "1feefcd0-3dee-99bf-42e1-19b09171b830",
+                      "type": "PipelineReference"
+                    },
+                    "parameters": {
+                      "par_source_folder": {
+                        "value": "@json(pipeline().parameters.Integration_setting).source_folder",
+                        "type": "Expression"
+                      },
+                      "par_file_type": {
+                        "value": "@json(pipeline().parameters.Integration_setting).file_type",
+                        "type": "Expression"
+                      },
+                      "par_entity": {
+                        "value": "@json(pipeline().parameters.Integration_setting).entity",
+                        "type": "Expression"
+                      },
+                      "Integration_setting": {
+                        "value": "@pipeline().parameters.Integration_setting",
+                        "type": "Expression"
+                      },
+                      "par_target_folder": {
+                        "value": "@json(pipeline().parameters.Integration_setting).destination_folder",
+                        "type": "Expression"
+                      },
+                      "par_global_run_id": {
+                        "value": "@pipeline().parameters.par_global_run_id",
+                        "type": "Expression"
+                      },
+                      "par_lastdate_process": {
+                        "value": "@pipeline().parameters.par_lastdate_process",
+                        "type": "Expression"
+                      },
+                      "par_datetime_region": {
+                        "value": "@pipeline().parameters.par_datetime_region",
+                        "type": "Expression"
+                      },
+                      "par_process_step": {
+                        "value": "@pipeline().parameters.par_process_step",
+                        "type": "Expression"
+                      },
+                      "par_target_container": {
+                        "value": "@json(pipeline().parameters.Integration_setting).bronze_container",
+                        "type": "Expression"
+                      },
+                      "par_source_container": {
+                        "value": "@json(pipeline().parameters.Integration_setting).source_container",
+                        "type": "Expression"
+                      },
+                      "par_workspaceid": {
+                        "value": "@json(pipeline().parameters.Integration_setting).bronze_workspace_ID",
+                        "type": "Expression"
+                      }
+                    },
+                    "waitOnCompletion": true
+                  },
+                  "policy": {
+                    "secureInput": false
+                  },
+                  "name": "DP101",
+                  "dependsOn": []
+                }
+              ]
+            },
+            {
+              "value": "asql",
+              "activities": [
+                {
+                  "type": "ExecutePipeline",
+                  "typeProperties": {
+                    "pipeline": {
+                      "referenceName": "8433e2c9-d555-9ef9-4dda-10832f9bd66f",
+                      "type": "PipelineReference"
+                    },
+                    "parameters": {
+                      "par_target_folder": {
+                        "value": "@json(pipeline().parameters.Integration_setting).destination_folder",
+                        "type": "Expression"
+                      },
+                      "par_target_file": {
+                        "value": "@json(pipeline().parameters.Integration_setting).filename",
+                        "type": "Expression"
+                      },
+                      "par_global_run_id": {
+                        "value": "@pipeline().parameters.par_global_run_id",
+                        "type": "Expression"
+                      },
+                      "par_entity": {
+                        "value": "@json(pipeline().parameters.Integration_setting).entity",
+                        "type": "Expression"
+                      },
+                      "par_lastdate_process": {
+                        "value": "@pipeline().parameters.par_lastdate_process",
+                        "type": "Expression"
+                      },
+                      "par_datetime_region": {
+                        "value": "@pipeline().parameters.par_datetime_region",
+                        "type": "Expression"
+                      },
+                      "par_file_type": {
+                        "value": "@json(pipeline().parameters.Integration_setting).file_type",
+                        "type": "Expression"
+                      },
+                      "par_process_step": {
+                        "value": "@pipeline().parameters.par_process_step",
+                        "type": "Expression"
+                      },
+                      "par_target_container": {
+                        "value": "@json(pipeline().parameters.Integration_setting).bronze_container",
+                        "type": "Expression"
+                      },
+                      "par_source_container": {
+                        "value": "@json(pipeline().parameters.Integration_setting).source_container",
+                        "type": "Expression"
+                      },
+                      "par_query": {
+                        "value": "@json(pipeline().parameters.Integration_setting).source_query",
+                        "type": "Expression"
+                      }
+                    },
+                    "waitOnCompletion": true
+                  },
+                  "policy": {
+                    "secureInput": false
+                  },
+                  "name": "DP002",
+                  "dependsOn": []
+                }
+              ]
+            }
+          ],
+          "defaultActivities": []
+        },
+        "name": "Switch Source",
+        "dependsOn": []
+      }
+    ],
+    "parameters": {
+      "Integration_setting": {
+        "type": "string"
+      },
+      "par_global_run_id": {
+        "type": "string"
+      },
+      "par_lastdate_process": {
+        "type": "string"
+      },
+      "par_source": {
+        "type": "string"
+      },
+      "par_datetime_region": {
+        "type": "string"
+      },
+      "par_process_step": {
+        "type": "string"
+      }
+    }
+  }
+}

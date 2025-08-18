@@ -1,0 +1,11 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/gitIntegration/platformProperties/2.0.0/schema.json",
+  "metadata": {
+    "type": "Report",
+    "displayName": "Integration Processes tracking"
+  },
+  "config": {
+    "version": "2.0",
+    "logicalId": "dbf3dd73-0f25-8dc6-4cea-da25d91deaa2"
+  }
+}

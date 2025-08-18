@@ -1,0 +1,11 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/gitIntegration/platformProperties/2.0.0/schema.json",
+  "metadata": {
+    "type": "SemanticModel",
+    "displayName": "ADW Headcount"
+  },
+  "config": {
+    "version": "2.0",
+    "logicalId": "fef07c19-cb94-915d-4b5b-1fea3376bffb"
+  }
+}
