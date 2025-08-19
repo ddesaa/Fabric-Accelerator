@@ -25,7 +25,7 @@ Fabric Accelerator es una solución desarrollada en Microsoft Fabric que permite
 Con Fabric Accelerator, las organizaciones pueden poner en marcha su plataforma de datos en Fabric de forma inmediata, reduciendo el tiempo de arranque de semanas a horas, y asegurando que el diseño inicial sigue los estándares modernos de ingeniería de datos en la nube.  
 Además, al estar basado en un **enfoque arquitectónico replicable**, se convierte en un marco conceptual que también puede implementarse en entornos **Synapse** o **Databricks**, ofreciendo continuidad y consistencia en ecosistemas de datos híbridos.
 
-#Solución Técnica
+# Solución Técnica
 En esta versión de una solución **Fabric Accelerator** se intentó adaptar la propuesta de [bennyaustin](https://github.com/bennyaustin/fabric-accelerator) a otras experiencias en  soluciones de **integraciones de datos** Tomando lo más conveniente de ambas según mi experiencia.
 
 * * *
